@@ -127,6 +127,68 @@ namespace crb
         vecOne.x * vecTwo.y - vecOne.y * vecTwo.x
       };
     }
+
+    /**
+     * @brief Represents a 4x4 matrix.
+     * 
+     * This class represents a 4x4 matrix used for transformations in 3D graphics.
+     */
+    class Mat4
+    {
+      public:
+        /**
+         * @brief Default constructor.
+         */
+        Mat4()
+        {
+          for (int y = 0; y < 4; y++)
+          {
+            for (int x = 0; x < 4; x++)
+            {
+              elements[y][x] = 0.f;
+            }
+          }
+        }
+        /**
+         * @brief Constructs a Mat4 object with the specified diagonal value.
+         * 
+         * @param diagonalValue The value to set for the diagonal elements.
+         */
+        Mat4(const float diagonalValue)
+        {
+          for (int y = 0; y < 4; y++)
+          {
+            for (int x = 0; x < 4; x++)
+            {
+              elements[y][x] = x == y ? diagonalValue : 0.f;
+            }
+          }
+        }
+
+        /**
+         * @brief Accesses the specified row of the matrix.
+         * 
+         * @param index The index of the row to access.
+         * @return A pointer to the specified row.
+         */
+        float* operator[](int index)
+        {
+          return this->elements[index];
+        }
+        /**
+         * @brief Accesses the specified row of the matrix (const version).
+         * 
+         * @param index The index of the row to access.
+         * @return A pointer to the specified row.
+         */
+        const float* operator[](int index) const
+        {
+          return this->elements[index];
+        }
+
+      private:
+        float elements[4][4];
+    };
   }
 }
 

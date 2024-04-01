@@ -17,9 +17,20 @@ namespace crb
      * 
      * @param vec The 3D vector to print.
      */
-    void printVec(const crb::Space::Vec3& vec)
+    void printVector(const crb::Space::Vec3& vec)
     {
       std::cout << "X: " << vec.x << "; Y: " << vec.y << "; Z: " << vec.z << '\n';
+    }
+    void printMatrix(const crb::Space::Mat4& mat)
+    {
+      for (int y = 0; y < 4; y++)
+      {
+        for (int x = 0; x < 4; x++)
+        {
+          std::cout << mat[y][x] << " ";
+        }
+        std::cout << '\n';
+      }
     }
   }
 }
