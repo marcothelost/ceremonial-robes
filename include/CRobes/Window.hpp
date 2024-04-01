@@ -7,6 +7,7 @@
 #include <string>
 
 #include "Core.hpp"
+#include "Color.hpp"
 
 namespace crb
 {
@@ -72,6 +73,13 @@ namespace crb
        */
       std::string getTitle() const
       { return this->title; }
+      /**
+       * @brief Gets the clear color used for rendering.
+       * 
+       * @return The clear color used for rendering.
+       */
+      crb::Color::RGBA getClearColor() const
+      { return this->clearColor; }
 
       /**
        * @brief Gets the title of the window.
@@ -97,6 +105,21 @@ namespace crb
         this->title = title;
         glfwSetWindowTitle(this->glfwInstance, title.c_str());
       }
+      /**
+       * @brief Sets the clear color used for rendering.
+       * 
+       * @param clearColor The new clear color.
+       */
+      void setClearColor(const crb::Color::RGBA& clearColor)
+      {
+        this->clearColor = clearColor;
+        glClearColor(
+          this->clearColor.red,
+          this->clearColor.green,
+          this->clearColor.blue,
+          this->clearColor.alpha
+        );
+      }
 
     protected:
       /**
@@ -119,7 +142,8 @@ namespace crb
       unsigned int height {600u};
       std::string title   {"GLFW"};
 
-      GLFWwindow* glfwInstance {NULL};
+      GLFWwindow*      glfwInstance {NULL};
+      crb::Color::RGBA clearColor   {crb::Color::Black};
 
       /**
        * @brief Internal method for initializing the window.

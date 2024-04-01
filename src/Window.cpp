@@ -32,6 +32,13 @@ void crb::Window::_initialize()
   glfwMakeContextCurrent(this->glfwInstance);
   glfwSetFramebufferSizeCallback(this->glfwInstance, framebufferSizeCallback);
   crb::Core::initializeGlew();
+
+  glClearColor(
+    this->clearColor.red,
+    this->clearColor.green,
+    this->clearColor.blue,
+    this->clearColor.alpha
+  );
 }
 
 void crb::Window::_update()

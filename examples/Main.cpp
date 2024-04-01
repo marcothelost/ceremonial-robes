@@ -6,6 +6,7 @@
 
 #include "CRobes/Constants.hpp"
 #include "CRobes/Core.hpp"
+#include "CRobes/Color.hpp"
 #include "CRobes/File.hpp"
 #include "CRobes/Graphics.hpp"
 #include "CRobes/Window.hpp"
@@ -93,13 +94,7 @@ int main()
     WINDOW_TITLE
   };
   window.initialize();
-
-  // Clear Color
-  GLclampf red   {0.f};
-  GLclampf green {0.f};
-  GLclampf blue  {0.f};
-  GLclampf alpha {1.f};
-  glClearColor(red, green, blue, alpha);
+  window.setClearColor(crb::Color::Black);
 
   // Printing Engine and Version Info
   crb::Core::printEngineInfo();
