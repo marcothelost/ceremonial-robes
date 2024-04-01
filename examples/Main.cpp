@@ -7,6 +7,7 @@
 #include "CRobes/Constants.hpp"
 #include "CRobes/Core.hpp"
 #include "CRobes/File.hpp"
+#include "CRobes/Graphics.hpp"
 
 // Constants
 constexpr unsigned int WINDOW_WIDTH  {800u};
@@ -90,56 +91,12 @@ int main()
   const char* vertexShaderSourceC = vertexShaderSource.c_str();
   const char* fragmentShaderSourceC = fragmentShaderSource.c_str();
 
-  // Shaders
-  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-  glShaderSource(vertexShader, 1, &vertexShaderSourceC, NULL);
-  glShaderSource(fragmentShader, 1, &fragmentShaderSourceC, NULL);
-
-  glCompileShader(vertexShader);
-  glCompileShader(fragmentShader);
-
-  // Info Log
-  int success {0};
-  char infoLog[crb::INFO_LOG_SIZE];
-
-  // Validating the Vertex Shader
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if (!success)
+  // Shader
+  crb::Graphics::Shader defaultShader
   {
-    glGetShaderInfoLog(vertexShader, crb::INFO_LOG_SIZE, NULL, infoLog);
-    std::cerr << "Failed to compile the vertex shader!\n";
-    std::cerr << "Error: " << infoLog << '\n';
-  }
-
-  // Validating the Fragment Shader
-  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-  if (!success)
-  {
-    glGetShaderInfoLog(fragmentShader, crb::INFO_LOG_SIZE, NULL, infoLog);
-    std::cerr << "Failed to compile the fragment shader!\n";
-    std::cerr << "Error: " << infoLog << '\n';
-  }
-
-  // Shader Program
-  GLuint shaderProgram = glCreateProgram();
-  glAttachShader(shaderProgram, vertexShader);
-  glAttachShader(shaderProgram, fragmentShader);
-  glLinkProgram(shaderProgram);
-
-  // Validating the Shader Program
-  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-  if (!success)
-  {
-    glGetProgramInfoLog(shaderProgram, crb::INFO_LOG_SIZE, NULL, infoLog);
-    std::cerr << "Failed to link the shader program!\n";
-    std::cerr << "Error: " << infoLog << '\n';
-  }
-
-  // Deleting the Shaders
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
+    "resources/Shaders/default.vert",
+    "resources/Shaders/default.frag"
+  };
 
   // VAO, VBO, and EBO
   GLuint VAO;
@@ -166,12 +123,15 @@ int main()
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+  // Line Mode
+  crb::Graphics::useLineMode();
+
   // Main Loop
   while (!glfwWindowShouldClose(window))
   {
     glfwPollEvents();
     glClear(GL_COLOR_BUFFER_BIT);
-    glUseProgram(shaderProgram);
+    defaultShader.Use();
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
     glfwSwapBuffers(window);
@@ -181,7 +141,7 @@ int main()
   glDeleteVertexArrays(1, &VAO);
   glDeleteBuffers(1, &VBO);
   glDeleteBuffers(1, &EBO);
-  glDeleteProgram(shaderProgram);
+  defaultShader.Delete();
   glfwDestroyWindow(window);
   glfwTerminate();
   return EXIT_SUCCESS;
