@@ -103,6 +103,45 @@ namespace crb
       private:
         GLuint ID;
     };
+
+    /**
+     * @class EBO
+     * @brief Encapsulates an OpenGL Element Buffer Object (EBO).
+     * 
+     * This class provides functionalities for creating, binding, unbinding,
+     * and deleting an Element Buffer Object in OpenGL. EBOs are used to store
+     * indices that reference vertices in VBOs for efficient rendering.
+     */
+    class EBO
+    {
+      public:
+        /**
+         * @brief Constructs an EBO object with the specified indices.
+         *
+         * @param indices An array of GLuint containing index data.
+         * @param indicesSize The size of the index data array.
+         */
+        EBO(GLuint indices[], GLsizeiptr indicesSize);
+
+        /**
+         * @brief Binds the EBO.
+         */
+        void Bind()
+        { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID); }
+        /**
+         * @brief Unbinds the EBO.
+         */
+        void Unbind()
+        { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); }
+        /**
+         * @brief Deletes the EBO, releasing associated OpenGL resources.
+         */
+        void Delete()
+        { glDeleteBuffers(1, &this->ID); }
+
+      private:
+        GLuint ID;
+    };
   }
 }
 
