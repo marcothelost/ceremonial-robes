@@ -10,6 +10,8 @@
 #include "CRobes/File.hpp"
 #include "CRobes/Graphics.hpp"
 #include "CRobes/Window.hpp"
+#include "CRobes/Space.hpp"
+#include "CRobes/Debug.hpp"
 
 // Constants
 constexpr unsigned int WINDOW_WIDTH  {800u};
@@ -52,7 +54,7 @@ class MainWindow : public crb::Window
       this->VAO1.Bind();
       this->VBO1.Bind();
       this->EBO1.Bind();
-      
+
       this->VAO1.LinkAttribute(this->VBO1, 0, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)0);
       this->VAO1.LinkAttribute(this->VBO1, 1, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 
@@ -103,6 +105,10 @@ int main()
 
   // Line Mode
   crb::Graphics::useLineMode();
+
+  // Space Testing
+  crb::Space::Vec3 vec {0.f, 2.f, 3.f};
+  crb::Debug::printVec(vec);
 
   // Main Loop
   window.loop();
