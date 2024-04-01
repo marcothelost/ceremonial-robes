@@ -22,6 +22,15 @@ namespace crb
      * @brief Prints version information about OpenGL, GLEW, and GLFW.
      */
     void printVersionInfo();
+
+    /**
+     * @brief Initializes GLFW.
+     */
+    void initializeGlfw();
+    /**
+     * @brief Initializes GLEW.
+     */
+    void initializeGlew();
   }
 }
 

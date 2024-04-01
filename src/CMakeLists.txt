@@ -4,4 +4,5 @@ add_library(
   Core.cpp
   File.cpp
   Graphics.cpp
+  Window.cpp
 )
