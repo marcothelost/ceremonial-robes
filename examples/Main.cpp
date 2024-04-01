@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 
+#include "CRobes/Core.hpp"
+
 // Constants
 constexpr unsigned int WINDOW_WIDTH  {800u};
 constexpr unsigned int WINDOW_HEIGHT {600u};
@@ -56,6 +58,11 @@ int main()
   GLclampf blue  {0.f};
   GLclampf alpha {1.f};
   glClearColor(red, green, blue, alpha);
+
+  // Printing Engine and Version Info
+  crb::Core::printEngineInfo();
+  std::cout << '\n';
+  crb::Core::printVersionInfo();
 
   // Main Loop
   while (!glfwWindowShouldClose(window))

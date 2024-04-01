@@ -13,6 +13,7 @@ set(CMAKE_CXX_STANDARD 17)
 # Finding Library Paths
 find_path(GLEW_INCLUDE_DIR NAMES GL/glew.h PATHS ${CMAKE_SOURCE_DIR}/include)
 find_path(GLFW_INCLUDE_DIR NAMES GLFW/glfw3.h PATHS ${CMAKE_SOURCE_DIR}/include)
+set(CROBES_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 # Finding Libraries
 if(WIN32)
@@ -41,8 +42,16 @@ else()
   message(FATAL_ERROR "GLFW not found!")
 endif()
 
+# Validating Ceremonial Robes
+if(EXISTS ${CROBES_INCLUDE_DIR})
+  message("Ceremonial Robes found!")
+  set(CROBES_INCLUDE_DIRS ${CROBES_INCLUDE_DIR})
+else()
+  message(FATAL_ERROR "Ceremonial Robes not found!")
+endif()
+
 # Including External Libraries
-include_directories(${GLEW_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS})
+include_directories(${GLEW_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS} ${CROBES_INCLUDE_DIRS})
 
 # DLL Files
 if(WIN32)
@@ -53,4 +62,5 @@ if(WIN32)
 endif()
 
 # Subdirectories
+add_subdirectory(src)
 add_subdirectory(examples)
