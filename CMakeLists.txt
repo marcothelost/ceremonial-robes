@@ -7,13 +7,21 @@ set(PROJECT_NAME "cerenomialrobes")
 # Project Name
 project(${PROJECT_NAME})
 
-# Finding GLEW
-find_path(GLEW_INCLUDE_DIR NAMES GL/glew.h PATHS ${CMAKE_SOURCE_DIR}/include)
-find_library(GLEW_LIBRARY NAMES GLEW PATHS ${CMAKE_SOURCE_DIR}/lib)
+# C++ Standard
+set(CMAKE_CXX_STANDARD 17)
 
-# Finding GLFW
+# Finding Library Paths
+find_path(GLEW_INCLUDE_DIR NAMES GL/glew.h PATHS ${CMAKE_SOURCE_DIR}/include)
 find_path(GLFW_INCLUDE_DIR NAMES GLFW/glfw3.h PATHS ${CMAKE_SOURCE_DIR}/include)
-find_library(GLFW_LIBRARY NAMES glfw3 PATHS ${CMAKE_SOURCE_DIR}/lib)
+
+# Finding Libraries
+if(WIN32)
+  find_library(GLEW_LIBRARY NAMES GLEW.win PATHS ${CMAKE_SOURCE_DIR}/lib)
+  find_library(GLFW_LIBRARY NAMES glfw3.win PATHS ${CMAKE_SOURCE_DIR}/lib)
+else()
+  find_library(GLEW_LIBRARY NAMES GLEW PATHS ${CMAKE_SOURCE_DIR}/lib)
+  find_library(GLFW_LIBRARY NAMES glfw3 PATHS ${CMAKE_SOURCE_DIR}/lib)
+endif()
 
 # Validating GLEW
 if(GLEW_INCLUDE_DIR AND GLEW_LIBRARY)
@@ -35,6 +43,14 @@ endif()
 
 # Including External Libraries
 include_directories(${GLEW_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS})
+
+# DLL Files
+if(WIN32)
+  file(GLOB dll_files ${CMAKE_SOURCE_DIR}/lib/*.dll)
+  foreach(dll_file ${dll_files})
+    file(COPY ${dll_file} DESTINATION ${CMAKE_SOURCE_DIR}/build/examples)
+  endforeach()
+endif()
 
 # Subdirectories
 add_subdirectory(examples)
