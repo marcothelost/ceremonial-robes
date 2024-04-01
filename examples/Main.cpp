@@ -6,31 +6,12 @@
 
 #include "CRobes/Constants.hpp"
 #include "CRobes/Core.hpp"
+#include "CRobes/File.hpp"
 
 // Constants
 constexpr unsigned int WINDOW_WIDTH  {800u};
 constexpr unsigned int WINDOW_HEIGHT {600u};
 const     std::string  WINDOW_TITLE  {"GLFW"};
-
-// Shader Source Codes
-const char* vertexShaderSource =
-  "#version 330 core\n"
-  "layout (location = 0) in vec3 aPos;\n"
-  "layout (location = 1) in vec3 aCol;\n"
-  "out vec3 vertCol;\n"
-  "void main()\n"
-  "{\n"
-  "  vertCol = aCol;\n"
-  "  gl_Position = vec4(aPos, 1.f);\n"
-  "}\0";
-const char* fragmentShaderSource =
-  "#version 330 core\n"
-  "in vec3 vertCol;\n"
-  "out vec4 FragColor;\n"
-  "void main()\n"
-  "{\n"
-  "  FragColor = vec4(vertCol, 1.f);\n"
-  "}\0";
 
 // Vertices and Indices
 GLfloat vertices[] =
@@ -102,12 +83,19 @@ int main()
   std::cout << '\n';
   crb::Core::printVersionInfo();
 
+  // Shader Source Codes
+  const std::string vertexShaderSource = crb::File::getContents("resources/Shaders/default.vert");
+  const std::string fragmentShaderSource = crb::File::getContents("resources/Shaders/default.frag");
+
+  const char* vertexShaderSourceC = vertexShaderSource.c_str();
+  const char* fragmentShaderSourceC = fragmentShaderSource.c_str();
+
   // Shaders
   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
   GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-  glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-  glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+  glShaderSource(vertexShader, 1, &vertexShaderSourceC, NULL);
+  glShaderSource(fragmentShader, 1, &fragmentShaderSourceC, NULL);
 
   glCompileShader(vertexShader);
   glCompileShader(fragmentShader);
