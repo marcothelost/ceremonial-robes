@@ -107,8 +107,11 @@ int main()
   crb::Graphics::useLineMode();
 
   // Space Testing
-  crb::Space::Vec3 vec {0.f, 2.f, 3.f};
-  crb::Debug::printVec(vec);
+  crb::Space::Vec3 vecA {0.f, 2.f, 3.f};
+  crb::Space::Vec3 vecB {3.f, 1.f, -2.f};
+  crb::Debug::printVec((vecA + vecB) * 3);
+  std::cout << crb::Space::dot(vecA, vecB) << '\n';
+  crb::Debug::printVec(crb::Space::cross(vecA, vecB));
 
   // Main Loop
   window.loop();

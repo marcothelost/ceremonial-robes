@@ -43,10 +43,90 @@ namespace crb
         : x(scalar), y(scalar), z(scalar)
         {}
 
+        /**
+         * @brief Overloaded addition operator.
+         * 
+         * Adds two Vec3 objects component-wise and returns the result.
+         * 
+         * @param vec The Vec3 object to add.
+         * @return The resulting Vec3 object.
+         */
+        crb::Space::Vec3 operator+(const crb::Space::Vec3& vec)
+        {
+          return
+          {
+            this->x + vec.x,
+            this->y + vec.y,
+            this->z + vec.z
+          };
+        }
+        /**
+         * @brief Overloaded subtraction operator.
+         * 
+         * Subtracts two Vec3 objects component-wise and returns the result.
+         * 
+         * @param vec The Vec3 object to subtract.
+         * @return The resulting Vec3 object.
+         */
+        crb::Space::Vec3 operator-(const crb::Space::Vec3& vec)
+        {
+          return
+          {
+            this->x - vec.x,
+            this->y - vec.y,
+            this->z - vec.z
+          };
+        }
+        /**
+         * @brief Overloaded multiplication operator.
+         * 
+         * Multiplies a Vec3 object by a scalar value and returns the result.
+         * 
+         * @tparam T The type of the scalar value.
+         * @param scalar The scalar value to multiply by.
+         * @return The resulting Vec3 object.
+         */
+        template <typename T>
+        crb::Space::Vec3 operator*(const T scalar)
+        {
+          return
+          {
+            this->x * scalar,
+            this->y * scalar,
+            this->z * scalar
+          };
+        }
+
         float x {0.f};
         float y {0.f};
         float z {0.f};
     };
+
+    /**
+     * @brief Computes the dot product of two Vec3 objects.
+     * 
+     * @param vecOne The first Vec3 object.
+     * @param vecTwo The second Vec3 object.
+     * @return The dot product of the two Vec3 objects.
+     */
+    inline float dot(const crb::Space::Vec3& vecOne, crb::Space::Vec3& vecTwo)
+    { return vecOne.x * vecTwo.x + vecOne.y * vecTwo.y + vecOne.z * vecTwo.z; }
+    /**
+     * @brief Computes the cross product of two Vec3 objects.
+     * 
+     * @param vecOne The first Vec3 object.
+     * @param vecTwo The second Vec3 object.
+     * @return The cross product of the two Vec3 objects.
+     */
+    inline crb::Space::Vec3 cross(const crb::Space::Vec3& vecOne, crb::Space::Vec3& vecTwo)
+    {
+      return
+      {
+        vecOne.y * vecTwo.z - vecOne.z * vecTwo.y,
+        vecOne.z * vecTwo.x - vecOne.x * vecTwo.z,
+        vecOne.x * vecTwo.y - vecOne.y * vecTwo.x
+      };
+    }
   }
 }
 
