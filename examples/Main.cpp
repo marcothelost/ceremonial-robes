@@ -107,8 +107,9 @@ int main()
   crb::Graphics::useLineMode();
 
   // Space Testing
-  crb::Space::Mat4 mat {1.f};
-  crb::Debug::printMatrix(mat);
+  crb::Space::Mat4 mat1 {1.f};
+  crb::Space::Mat4 mat2 {1.f};
+  crb::Debug::printMatrix(mat1 * mat2);
 
   // Main Loop
   window.loop();

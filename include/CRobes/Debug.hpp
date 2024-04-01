@@ -21,6 +21,11 @@ namespace crb
     {
       std::cout << "X: " << vec.x << "; Y: " << vec.y << "; Z: " << vec.z << '\n';
     }
+    /**
+     * @brief Prints the elements of a 4x4 matrix.
+     * 
+     * @param mat The 4x4 matrix to print.
+     */
     void printMatrix(const crb::Space::Mat4& mat)
     {
       for (int y = 0; y < 4; y++)

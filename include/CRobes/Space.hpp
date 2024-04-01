@@ -96,6 +96,26 @@ namespace crb
             this->z * scalar
           };
         }
+        /**
+         * @brief Overloaded multiplication operator (scalar * vector).
+         * 
+         * Multiplies a scalar value by a Vec3 object and returns the result.
+         * 
+         * @tparam T The type of the scalar value.
+         * @param scalar The scalar value to multiply by.
+         * @param vec The Vec3 object to multiply.
+         * @return The resulting Vec3 object.
+         */
+        template <typename T>
+        friend crb::Space::Vec3 operator*(const T scalar, const crb::Space::Vec3& vec)
+        {
+          return
+          {
+            vec.x * scalar,
+            vec.y * scalar,
+            vec.z * scalar
+          };
+        }
 
         float x {0.f};
         float y {0.f};
@@ -145,7 +165,7 @@ namespace crb
           {
             for (int x = 0; x < 4; x++)
             {
-              elements[y][x] = 0.f;
+              this->elements[y][x] = 0.f;
             }
           }
         }
@@ -160,7 +180,7 @@ namespace crb
           {
             for (int x = 0; x < 4; x++)
             {
-              elements[y][x] = x == y ? diagonalValue : 0.f;
+              this->elements[y][x] = x == y ? diagonalValue : 0.f;
             }
           }
         }
@@ -184,6 +204,105 @@ namespace crb
         const float* operator[](int index) const
         {
           return this->elements[index];
+        }
+
+        /**
+         * @brief Multiplies all elements of the matrix by a scalar value.
+         * 
+         * @tparam T The type of the scalar value.
+         * @param scalar The scalar value to multiply by.
+         * @return The resulting matrix.
+         */
+        template <typename T>
+        crb::Space::Mat4 operator*(const T scalar)
+        {
+          crb::Space::Mat4 result {*this};
+          for (int y = 0; y < 4; y++)
+          {
+            for (int x = 0; x < 4; x++)
+            {
+              result[y][x] *= scalar;
+            }
+          }
+          return result;
+        }
+        /**
+         * @brief Multiplies all elements of the matrix by a scalar value (scalar * matrix).
+         * 
+         * @tparam T The type of the scalar value.
+         * @param scalar The scalar value to multiply by.
+         * @param mat The matrix to multiply.
+         * @return The resulting matrix.
+         */
+        template <typename T>
+        friend crb::Space::Mat4 operator*(const T scalar, const crb::Space::Mat4& mat)
+        {
+          crb::Space::Mat4 result {mat};
+          for (int y = 0; y < 4; y++)
+          {
+            for (int x = 0; x < 4; x++)
+            {
+              result[y][x] = result[y][x] * scalar;
+            }
+          }
+          return result;
+        }
+        /**
+         * @brief Adds two matrices element-wise.
+         * 
+         * @param mat The matrix to add.
+         * @return The resulting matrix.
+         */
+        crb::Space::Mat4 operator+(const crb::Space::Mat4& mat)
+        {
+          crb::Space::Mat4 result {mat};
+          for (int y = 0; y < 4; y++)
+          {
+            for (int x = 0; x < 4; x++)
+            {
+              result[y][x] = this->elements[y][x] + mat[y][x];
+            }
+          }
+          return result;
+        }
+        /**
+         * @brief Subtracts two matrices element-wise.
+         * 
+         * @param mat The matrix to subtract.
+         * @return The resulting matrix.
+         */
+        crb::Space::Mat4 operator-(const crb::Space::Mat4& mat)
+        {
+          crb::Space::Mat4 result {mat};
+          for (int y = 0; y < 4; y++)
+          {
+            for (int x = 0; x < 4; x++)
+            {
+              result[y][x] = this->elements[y][x] - mat[y][x];
+            }
+          }
+          return result;
+        }
+        /**
+         * @brief Multiplies this matrix by another matrix.
+         * 
+         * @param mat The matrix to multiply by.
+         * @return The resulting matrix.
+         */
+        crb::Space::Mat4 operator*(const crb::Space::Mat4& mat)
+        {
+          crb::Space::Mat4 result;
+          for (int i = 0; i < 4; i++)
+          {
+            for (int j = 0; j < 4; j++)
+            {
+              for (int k = 0; k < 4; k++)
+              {
+                result[i][j] += this->elements[i][k] * mat[k][j];
+              }
+            }
+          }
+          return result;
         }
 
       private:
