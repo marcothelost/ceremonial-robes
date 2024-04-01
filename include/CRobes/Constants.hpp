@@ -21,6 +21,11 @@ namespace crb
    * @brief The license under which the Ceremonial Robes Engine is distributed.
    */
   inline const std::string ENGINE_LICENSE {"GNU GPLv3"};
+
+  /**
+   * @brief The size of the information log buffer.
+   */
+  inline const unsigned int INFO_LOG_SIZE {512u};
 }
 
 #endif // CRB_CONSTANTS_HPP
