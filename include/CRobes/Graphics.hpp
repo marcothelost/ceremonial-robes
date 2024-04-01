@@ -53,12 +53,12 @@ namespace crb
         /**
          * @brief Activates the shader program for use.
          */
-        void Use()
+        void Use() const
         { glUseProgram(this->ID); }
         /**
          * @brief Deletes the shader program, releasing associated OpenGL resources.
          */
-        void Delete()
+        void Delete() const
         { glDeleteProgram(this->ID); }
 
       private:
@@ -87,17 +87,17 @@ namespace crb
         /**
          * @brief Binds the VBO.
          */
-        void Bind()
+        void Bind() const
         { glBindBuffer(GL_ARRAY_BUFFER, this->ID); }
         /**
          * @brief Unbinds the VBO.
          */
-        void Unbind()
+        void Unbind() const
         { glBindBuffer(GL_ARRAY_BUFFER, 0); }
         /**
          * @brief Deletes the VBO, releasing associated OpenGL resources.
          */
-        void Delete()
+        void Delete() const
         { glDeleteBuffers(1, &this->ID); }
 
       private:
@@ -126,18 +126,66 @@ namespace crb
         /**
          * @brief Binds the EBO.
          */
-        void Bind()
+        void Bind() const
         { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID); }
         /**
          * @brief Unbinds the EBO.
          */
-        void Unbind()
+        void Unbind() const
         { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); }
         /**
          * @brief Deletes the EBO, releasing associated OpenGL resources.
          */
-        void Delete()
+        void Delete() const
         { glDeleteBuffers(1, &this->ID); }
+
+      private:
+        GLuint ID;
+    };
+
+    /**
+     * @class VAO
+     * @brief Encapsulates an OpenGL Vertex Array Object (VAO).
+     * 
+     * This class provides functionalities for creating, binding, unbinding,
+     * and deleting a Vertex Array Object in OpenGL. VAOs are used to store
+     * configuration of vertex attribute data for efficient rendering.
+     */
+    class VAO
+    {
+      public:
+        /**
+         * @brief Constructs a VAO object.
+         */
+        VAO()
+        { glGenVertexArrays(1, &this->ID); }
+
+        /**
+         * @brief Binds the VAO.
+         */
+        void Bind() const
+        { glBindVertexArray(this->ID); }
+        /**
+         * @brief Unbinds the VAO.
+         */
+        void Unbind() const
+        { glBindVertexArray(0); }
+        /**
+         * @brief Deletes the VAO, releasing associated OpenGL resources.
+         */
+        void Delete() const
+        { glDeleteVertexArrays(1, &this->ID); }
+        /**
+         * @brief Links a vertex attribute to the VAO.
+         *
+         * @param VBO The VBO containing the vertex data.
+         * @param layout The attribute layout location.
+         * @param size The number of components per attribute.
+         * @param type The data type of each component.
+         * @param stride The stride between consecutive generic vertex attributes.
+         * @param offset The offset of the first component of the first generic vertex attribute.
+         */
+        void LinkAttribute(const crb::Graphics::VBO& VBO, GLuint layout, GLuint size, GLenum type, GLsizeiptr stride, const void* offset) const;
 
       private:
         GLuint ID;

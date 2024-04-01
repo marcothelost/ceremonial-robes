@@ -76,3 +76,11 @@ crb::Graphics::EBO::EBO(GLuint indices[], GLsizeiptr indicesSize)
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
   this->Unbind();
 }
+
+void crb::Graphics::VAO::LinkAttribute(const crb::Graphics::VBO& VBO, GLuint layout, GLuint size, GLenum type, GLsizeiptr stride, const void* offset) const
+{
+  VBO.Bind();
+  glVertexAttribPointer(layout, size, type, GL_FALSE, stride, offset);
+  glEnableVertexAttribArray(layout);
+  VBO.Unbind();
+}
