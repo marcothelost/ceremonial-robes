@@ -60,3 +60,11 @@ crb::Graphics::Shader::Shader(const std::string& vertexPath, const std::string& 
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShader);
 }
+
+crb::Graphics::VBO::VBO(GLfloat vertices[], GLsizeiptr verticesSize)
+{
+  glGenBuffers(1, &this->ID);
+  this->Bind();
+  glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
+  this->Unbind();
+}

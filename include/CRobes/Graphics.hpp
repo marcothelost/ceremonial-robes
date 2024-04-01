@@ -64,6 +64,45 @@ namespace crb
       private:
         GLuint ID;
     };
+
+    /**
+     * @class VBO
+     * @brief Encapsulates an OpenGL Vertex Buffer Object (VBO).
+     * 
+     * This class provides functionalities for creating, binding, unbinding,
+     * and deleting a Vertex Buffer Object in OpenGL. VBOs are used to store
+     * vertex data in GPU memory for efficient rendering.
+     */
+    class VBO
+    {
+      public:
+        /**
+         * @brief Constructs a VBO object with the specified vertex data.
+         *
+         * @param vertices An array of GLfloat containing vertex data.
+         * @param verticesSize The size of the vertex data array.
+         */
+        VBO(GLfloat vertices[], GLsizeiptr verticesSize);
+
+        /**
+         * @brief Binds the VBO.
+         */
+        void Bind()
+        { glBindBuffer(GL_ARRAY_BUFFER, this->ID); }
+        /**
+         * @brief Unbinds the VBO.
+         */
+        void Unbind()
+        { glBindBuffer(GL_ARRAY_BUFFER, 0); }
+        /**
+         * @brief Deletes the VBO, releasing associated OpenGL resources.
+         */
+        void Delete()
+        { glDeleteBuffers(1, &this->ID); }
+
+      private:
+        GLuint ID;
+    };
   }
 }
 
