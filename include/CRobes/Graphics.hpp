@@ -6,6 +6,7 @@
 
 #include "Constants.hpp"
 #include "File.hpp"
+#include "Space.hpp"
 
 namespace crb
 {
@@ -60,6 +61,18 @@ namespace crb
          */
         void Delete() const
         { glDeleteProgram(this->ID); }
+
+        /**
+         * @brief Sets the value of a uniform matrix variable in the shader program.
+         *
+         * @param mat The matrix value to set.
+         * @param uniform The name of the uniform matrix variable.
+         */
+        void SetMatrix4(const crb::Space::Mat4& mat, const std::string& uniform)
+        {
+          GLuint matLoc = glGetUniformLocation(this->ID, uniform.c_str());
+          glUniformMatrix4fv(matLoc, 1, GL_FALSE, crb::Space::valuePointer(mat));
+        }
 
       private:
         GLuint ID;

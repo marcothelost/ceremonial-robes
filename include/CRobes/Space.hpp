@@ -1,6 +1,8 @@
 #ifndef CRB_SPACE_HPP
 #define CRB_SPACE_HPP
 
+#include <cmath>
+
 namespace crb
 {
   /**
@@ -8,6 +10,20 @@ namespace crb
    */
   namespace Space
   {
+    /**
+     * @brief The mathematical constant pi.
+     */
+    const float PI = 3.141593f;
+
+    /**
+     * @brief Converts degrees to radians.
+     * 
+     * @param degrees The angle in degrees.
+     * @return The equivalent angle in radians.
+     */
+    inline float radians(const float degrees)
+    { return degrees * crb::Space::PI / 180.f; }
+
     /**
      * @class Vec3
      * @brief Represents a 3D vector.
@@ -308,6 +324,25 @@ namespace crb
       private:
         float elements[4][4];
     };
+
+    /**
+     * @brief Retrieves a pointer to the first element of a matrix for OpenGL usage.
+     * 
+     * @param mat The matrix.
+     * @return A pointer to the first element of the matrix.
+     */
+    inline const float* valuePointer(const crb::Space::Mat4& mat)
+    { return &mat[0][0]; }
+    /**
+     * @brief Generates a perspective projection matrix.
+     * 
+     * @param fov The field of view angle in degrees.
+     * @param aspect The aspect ratio of the viewport.
+     * @param zNear The distance to the near clipping plane.
+     * @param zFar The distance to the far clipping plane.
+     * @return The projection matrix.
+     */
+    crb::Space::Mat4 perspective(const float fov, const float aspect, const float zNear, const float zFar);
   }
 }
 
