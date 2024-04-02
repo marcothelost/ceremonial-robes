@@ -68,7 +68,7 @@ namespace crb
          * @param mat The matrix value to set.
          * @param uniform The name of the uniform matrix variable.
          */
-        void SetMatrix4(const crb::Space::Mat4& mat, const std::string& uniform)
+        void SetMatrix4(const crb::Space::Mat4& mat, const std::string& uniform) const
         {
           GLuint matLoc = glGetUniformLocation(this->ID, uniform.c_str());
           glUniformMatrix4fv(matLoc, 1, GL_FALSE, crb::Space::valuePointer(mat));

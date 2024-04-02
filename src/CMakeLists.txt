@@ -6,4 +6,5 @@ add_library(
   Graphics.cpp
   Window.cpp
   Space.cpp
+  Camera.cpp
 )

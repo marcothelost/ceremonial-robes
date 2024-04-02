@@ -12,6 +12,7 @@
 #include "CRobes/Graphics.hpp"
 #include "CRobes/Window.hpp"
 #include "CRobes/Space.hpp"
+#include "CRobes/Camera.hpp"
 
 // Constants
 constexpr unsigned int WINDOW_WIDTH  {800u};
@@ -19,10 +20,9 @@ constexpr unsigned int WINDOW_HEIGHT {600u};
 const     std::string  WINDOW_TITLE  {"GLFW"};
 
 // Camera Settings
-constexpr float CAMERA_FOV    {60.f};
-constexpr float CAMERA_ASPECT {(float)WINDOW_WIDTH / WINDOW_HEIGHT};
-constexpr float CAMERA_NEAR   {0.1f};
-constexpr float CAMERA_FAR    {100.f};
+constexpr float CAMERA_FOV  {60.f};
+constexpr float CAMERA_NEAR {0.1f};
+constexpr float CAMERA_FAR  {100.f};
 
 // Vertices and Indices
 GLfloat vertices[] =
@@ -80,18 +80,11 @@ class MainWindow : public crb::Window
       this->defaultShader.Use();
       this->VAO1.Bind();
 
-      crb::Space::Mat4 model {1.f};
-      crb::Space::Mat4 view {1.f};
-      crb::Space::Mat4 projection = crb::Space::perspective(
-        CAMERA_FOV,
-        CAMERA_ASPECT,
-        CAMERA_NEAR,
-        CAMERA_FAR
-      );
+      camera.updateMatrix();
+      camera.applyMatrix(this->defaultShader);
 
-      this->defaultShader.SetMatrix4(model, "model");
-      this->defaultShader.SetMatrix4(view, "view");
-      this->defaultShader.SetMatrix4(projection, "projection");
+      crb::Space::Mat4 model {1.f};
+      defaultShader.SetMatrix4(model, "model");
 
       glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
     }
@@ -101,6 +94,14 @@ class MainWindow : public crb::Window
     {
       "resources/Shaders/default.vert",
       "resources/Shaders/default.frag"
+    };
+    crb::Camera camera
+    {
+      CAMERA_FOV,
+      WINDOW_WIDTH,
+      WINDOW_HEIGHT,
+      CAMERA_NEAR,
+      CAMERA_FAR
     };
 
     crb::Graphics::VAO VAO1;

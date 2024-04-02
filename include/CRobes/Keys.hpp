@@ -62,6 +62,9 @@ namespace crb
     Z = GLFW_KEY_Z,
   };
 
+   /**
+   * @brief A namespace containing utility functions related to keyboard input in the Ceremonial Robes Engine.
+   */
   namespace Keys
   {
     /**
