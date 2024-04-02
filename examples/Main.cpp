@@ -7,6 +7,7 @@
 #include "CRobes/Constants.hpp"
 #include "CRobes/Core.hpp"
 #include "CRobes/Color.hpp"
+#include "CRobes/Keys.hpp"
 #include "CRobes/File.hpp"
 #include "CRobes/Graphics.hpp"
 #include "CRobes/Window.hpp"
@@ -69,6 +70,14 @@ class MainWindow : public crb::Window
     }
 
   protected:
+    void update()
+    {
+      if (this->isKeyPressed(crb::Key::Spacebar))
+      {
+        std::cout << "Spacebar!\n";
+      }
+    }
+
     void render()
     {
       this->defaultShader.Use();

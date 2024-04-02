@@ -8,6 +8,7 @@
 
 #include "Core.hpp"
 #include "Color.hpp"
+#include "Keys.hpp"
 
 namespace crb
 {
@@ -120,6 +121,15 @@ namespace crb
           this->clearColor.alpha
         );
       }
+
+      /**
+       * @brief Checks if a key is currently pressed.
+       * 
+       * @param key The key to check.
+       * @return True if the key is pressed, false otherwise.
+       */
+      inline bool isKeyPressed(const crb::Key& key)
+      { return crb::Keys::isPressed(this->glfwInstance, key); }
 
     protected:
       /**
