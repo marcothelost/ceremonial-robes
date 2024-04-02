@@ -22,11 +22,26 @@ namespace crb
        * @param bufferHeight The height of the buffer.
        * @param zNear The near clipping plane.
        * @param zFar The far clipping plane.
+       * @param speed The movement speed of the camera.
        */
-      Camera(const float fov, const float bufferWidth, const float bufferHeight, const float zNear, const float zFar)
-      : fov(fov), bufferWidth(bufferWidth), bufferHeight(bufferHeight), zNear(zNear), zFar(zFar)
+      Camera(const float fov, const float bufferWidth, const float bufferHeight, const float zNear, const float zFar, const float speed)
+      : fov(fov), bufferWidth(bufferWidth), bufferHeight(bufferHeight), zNear(zNear), zFar(zFar), speed(speed)
       {}
 
+      /**
+       * @brief Sets the movement vector of the camera.
+       * 
+       * @param movement The movement vector.
+       */
+      void setMovement(const crb::Space::Vec3& movement)
+      { this->movement = movement; }
+
+      /**
+       * @brief Updates the position of the camera based on its movement and deltaTime.
+       * 
+       * @param deltaTime The time elapsed since the last update.
+       */
+      void updatePosition(const float deltaTime);
       /**
        * @brief Updates the camera's projection matrix.
        */
@@ -45,9 +60,11 @@ namespace crb
       float bufferHeight {1.f};
       float zNear        {0.1f};
       float zFar         {100.f};
+      float speed        {10.f};
 
       crb::Space::Mat4 matrix   {1.f};
-      crb::Space::Vec3 position {0.f};
+      crb::Space::Vec3 position {0.f, 0.f, -3.f};
+      crb::Space::Vec3 movement {0.f};
   };
 }
 

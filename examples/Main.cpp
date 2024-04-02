@@ -20,19 +20,20 @@ constexpr unsigned int WINDOW_HEIGHT {600u};
 const     std::string  WINDOW_TITLE  {"GLFW"};
 
 // Camera Settings
-constexpr float CAMERA_FOV  {60.f};
-constexpr float CAMERA_NEAR {0.1f};
-constexpr float CAMERA_FAR  {100.f};
+constexpr float CAMERA_FOV   {60.f};
+constexpr float CAMERA_NEAR  {0.1f};
+constexpr float CAMERA_FAR   {100.f};
+constexpr float CAMERA_SPEED {10.f};
 
 // Vertices and Indices
 GLfloat vertices[] =
 {
-  -0.5f,  -0.5f, -3.f, 1.f, 1.f, 1.f,
-   0.0f,  -0.5f, -3.f, 1.f, 1.f, 1.f,
-   0.5f,  -0.5f, -3.f, 1.f, 1.f, 1.f,
-  -0.25f,  0.0f, -3.f, 1.f, 1.f, 1.f,
-   0.25f,  0.0f, -3.f, 1.f, 1.f, 1.f,
-   0.0f,   0.5f, -3.f, 1.f, 1.f, 1.f,
+  -0.5f,  -0.5f, 0.f, 1.f, 1.f, 1.f,
+   0.0f,  -0.5f, 0.f, 1.f, 1.f, 1.f,
+   0.5f,  -0.5f, 0.f, 1.f, 1.f, 1.f,
+  -0.25f,  0.0f, 0.f, 1.f, 1.f, 1.f,
+   0.25f,  0.0f, 0.f, 1.f, 1.f, 1.f,
+   0.0f,   0.5f, 0.f, 1.f, 1.f, 1.f,
 };
 GLuint indices[] =
 {
@@ -72,7 +73,20 @@ class MainWindow : public crb::Window
   protected:
     void update()
     {
-      std::cout << "FPS: " << this->getFPS() << '\n';
+      float xFactor {0.f};
+      float yFactor {0.f};
+      float zFactor {0.f};
+
+      if (this->isKeyPressed(crb::Key::W))
+      { zFactor += 1.f; }
+      if (this->isKeyPressed(crb::Key::S))
+      { zFactor -= 1.f; }
+
+      this->camera.setMovement({
+        xFactor,
+        yFactor,
+        zFactor
+      });
     }
 
     void render()
@@ -80,6 +94,7 @@ class MainWindow : public crb::Window
       this->defaultShader.Use();
       this->VAO1.Bind();
 
+      camera.updatePosition(this->getDeltaTime());
       camera.updateMatrix();
       camera.applyMatrix(this->defaultShader);
 
@@ -101,7 +116,8 @@ class MainWindow : public crb::Window
       WINDOW_WIDTH,
       WINDOW_HEIGHT,
       CAMERA_NEAR,
-      CAMERA_FAR
+      CAMERA_FAR,
+      CAMERA_SPEED
     };
 
     crb::Graphics::VAO VAO1;

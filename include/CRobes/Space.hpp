@@ -132,12 +132,83 @@ namespace crb
             vec.z * scalar
           };
         }
+        /**
+         * @brief Overloaded addition assignment operator.
+         * 
+         * Adds a Vec3 object component-wise to this Vec3 object.
+         * 
+         * @param vec The Vec3 object to add.
+         * @return Reference to this Vec3 object after addition.
+         */
+        crb::Space::Vec3& operator+=(const crb::Space::Vec3& vec)
+        {
+          this->x += vec.x;
+          this->y += vec.y;
+          this->z += vec.z;
+          return *this;
+        }
+        /**
+         * @brief Overloaded subtraction assignment operator.
+         * 
+         * Subtracts a Vec3 object component-wise from this Vec3 object.
+         * 
+         * @param vec The Vec3 object to subtract.
+         * @return Reference to this Vec3 object after subtraction.
+         */
+        crb::Space::Vec3& operator-=(const crb::Space::Vec3& vec)
+        {
+          this->x += vec.x;
+          this->y += vec.y;
+          this->z += vec.z;
+          return *this;
+        }
+        /**
+         * @brief Overloaded multiplication assignment operator.
+         * 
+         * Multiplies this Vec3 object by a scalar value.
+         * 
+         * @param scalar The scalar value to multiply.
+         * @return Reference to this Vec3 object after multiplication.
+         */
+        template <typename T>
+        crb::Space::Vec3& operator*=(const T scalar)
+        {
+          this->x *= scalar;
+          this->y *= scalar;
+          this->z *= scalar;
+          return *this;
+        }
 
         float x {0.f};
         float y {0.f};
         float z {0.f};
     };
 
+    /**
+     * @brief Calculates the length of a 3D vector.
+     * 
+     * @param vec The 3D vector.
+     * @return The length of the vector.
+     */
+    inline float lengthOf(const crb::Space::Vec3& vec)
+    { return sqrtf(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2)); }
+    /**
+     * @brief Normalizes a 3D vector.
+     * 
+     * @param vec The 3D vector to normalize.
+     * @return The normalized vector.
+     */
+    inline crb::Space::Vec3 normalize(crb::Space::Vec3& vec)
+    {
+      const float length = crb::Space::lengthOf(vec);
+      if (length == 0) return crb::Space::Vec3(0.f);
+      return
+      {
+        vec.x / length,
+        vec.y / length,
+        vec.z / length,
+      };
+    }
     /**
      * @brief Computes the dot product of two Vec3 objects.
      * 
@@ -312,6 +383,7 @@ namespace crb
           {
             for (int j = 0; j < 4; j++)
             {
+              result[i][j] = 0.f;
               for (int k = 0; k < 4; k++)
               {
                 result[i][j] += this->elements[i][k] * mat[k][j];
@@ -333,6 +405,21 @@ namespace crb
      */
     inline const float* valuePointer(const crb::Space::Mat4& mat)
     { return &mat[0][0]; }
+    /**
+     * @brief Creates a translation matrix.
+     * 
+     * @param mat The original matrix.
+     * @param vec The translation vector.
+     * @return The resulting translated matrix.
+     */
+    inline crb::Space::Mat4 translate(const crb::Space::Mat4&mat, const crb::Space::Vec3& vec)
+    {
+      crb::Space::Mat4 result {mat};
+      result[3][0] = vec.x;
+      result[3][1] = vec.y;
+      result[3][2] = vec.z;
+      return result;
+    }
     /**
      * @brief Generates a perspective projection matrix.
      * 
