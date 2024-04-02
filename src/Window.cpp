@@ -41,9 +41,17 @@ void crb::Window::_initialize()
   );
 }
 
+void crb::Window::_updateDeltaTime()
+{
+  float currentTime = (float)glfwGetTime();
+  this->deltaTime = currentTime - this->lastTime;
+  this->lastTime = currentTime;
+}
+
 void crb::Window::_update()
 {
   glfwPollEvents();
+  this->_updateDeltaTime();
   this->update();
 }
 

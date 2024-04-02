@@ -72,10 +72,7 @@ class MainWindow : public crb::Window
   protected:
     void update()
     {
-      if (this->isKeyPressed(crb::Key::Spacebar))
-      {
-        std::cout << "Spacebar!\n";
-      }
+      std::cout << "FPS: " << this->getFPS() << '\n';
     }
 
     void render()

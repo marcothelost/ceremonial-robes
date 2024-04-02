@@ -3,6 +3,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <cmath>
 #include <iostream>
 #include <string>
 
@@ -81,6 +82,20 @@ namespace crb
        */
       crb::Color::RGBA getClearColor() const
       { return this->clearColor; }
+      /**
+       * @brief Gets the time difference between frames.
+       * 
+       * @return The time difference between frames.
+       */
+      float getDeltaTime() const
+      { return this->deltaTime; }
+      /**
+       * @brief Calculates and returns the frames per second (FPS).
+       * 
+       * @return The frames per second (FPS), rounded to the nearest integer.
+       */
+      int getFPS() const
+      { return round(1.f / this->deltaTime); }
 
       /**
        * @brief Gets the title of the window.
@@ -155,10 +170,17 @@ namespace crb
       GLFWwindow*      glfwInstance {NULL};
       crb::Color::RGBA clearColor   {crb::Color::Black};
 
+      float deltaTime {0.f};
+      float lastTime  {(float)glfwGetTime()};
+
       /**
        * @brief Internal method for initializing the window.
        */
       void _initialize();
+      /**
+       * @brief Internal method for updating the time difference between frames.
+       */
+      void _updateDeltaTime();
       /**
        * @brief Internal method for updating the window content.
        */
