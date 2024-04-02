@@ -60,7 +60,7 @@ namespace crb
       float bufferHeight {1.f};
       float zNear        {0.1f};
       float zFar         {100.f};
-      float speed        {10.f};
+      float speed        {5.f};
 
       crb::Space::Mat4 matrix   {1.f};
       crb::Space::Vec3 position {0.f, 0.f, -3.f};

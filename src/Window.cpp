@@ -48,10 +48,21 @@ void crb::Window::_updateDeltaTime()
   this->lastTime = currentTime;
 }
 
+void crb::Window::_updateCursor()
+{
+  if (this->mouseLocked)
+  {
+    glfwSetInputMode(this->glfwInstance, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    return;
+  }
+  glfwSetInputMode(this->glfwInstance, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
 void crb::Window::_update()
 {
   glfwPollEvents();
   this->_updateDeltaTime();
+  this->_updateCursor();
   this->update();
 }
 

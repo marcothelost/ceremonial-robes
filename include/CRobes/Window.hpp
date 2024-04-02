@@ -96,6 +96,13 @@ namespace crb
        */
       int getFPS() const
       { return round(1.f / this->deltaTime); }
+      /**
+       * @brief Checks if the mouse is locked.
+       * 
+       * @return True if the mouse is locked, false otherwise.
+       */
+      bool getMouseLocked() const
+      { return this->mouseLocked; }
 
       /**
        * @brief Gets the title of the window.
@@ -138,6 +145,14 @@ namespace crb
       }
 
       /**
+       * @brief Sets the mouse lock state.
+       * 
+       * @param state The state to set the mouse lock to.
+       */
+      void setMouseLocked(const bool state)
+      { this->mouseLocked = state; }
+
+      /**
        * @brief Checks if a key is currently pressed.
        * 
        * @param key The key to check.
@@ -173,6 +188,8 @@ namespace crb
       float deltaTime {0.f};
       float lastTime  {(float)glfwGetTime()};
 
+      bool mouseLocked {false};
+
       /**
        * @brief Internal method for initializing the window.
        */
@@ -181,6 +198,10 @@ namespace crb
        * @brief Internal method for updating the time difference between frames.
        */
       void _updateDeltaTime();
+      /**
+       * @brief Internal method for updating the cursor.
+       */
+      void _updateCursor();
       /**
        * @brief Internal method for updating the window content.
        */

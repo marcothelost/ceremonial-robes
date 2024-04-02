@@ -23,7 +23,7 @@ const     std::string  WINDOW_TITLE  {"GLFW"};
 constexpr float CAMERA_FOV   {60.f};
 constexpr float CAMERA_NEAR  {0.1f};
 constexpr float CAMERA_FAR   {100.f};
-constexpr float CAMERA_SPEED {10.f};
+constexpr float CAMERA_SPEED {5.f};
 
 // Vertices and Indices
 GLfloat vertices[] =
@@ -73,6 +73,13 @@ class MainWindow : public crb::Window
   protected:
     void update()
     {
+      if (this->isKeyPressed(crb::Key::E))
+      { this->setMouseLocked(true); }
+      if (this->isKeyPressed(crb::Key::Escape))
+      { this->setMouseLocked(false); }
+
+      if (!this->getMouseLocked()) return;
+
       float xFactor {0.f};
       float yFactor {0.f};
       float zFactor {0.f};
@@ -81,6 +88,14 @@ class MainWindow : public crb::Window
       { zFactor += 1.f; }
       if (this->isKeyPressed(crb::Key::S))
       { zFactor -= 1.f; }
+      if (this->isKeyPressed(crb::Key::Spacebar))
+      { yFactor -= 1.f; }
+      if (this->isKeyPressed(crb::Key::LeftShift))
+      { yFactor += 1.f; }
+      if (this->isKeyPressed(crb::Key::A))
+      { xFactor += 1.f; }
+      if (this->isKeyPressed(crb::Key::D))
+      { xFactor -= 1.f; }
 
       this->camera.setMovement({
         xFactor,
