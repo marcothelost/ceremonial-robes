@@ -7,7 +7,6 @@
 #include "CRobes/Constants.hpp"
 #include "CRobes/Core.hpp"
 #include "CRobes/Color.hpp"
-#include "CRobes/Keys.hpp"
 #include "CRobes/File.hpp"
 #include "CRobes/Graphics.hpp"
 #include "CRobes/Window.hpp"
@@ -20,10 +19,11 @@ constexpr unsigned int WINDOW_HEIGHT {600u};
 const     std::string  WINDOW_TITLE  {"GLFW"};
 
 // Camera Settings
-constexpr float CAMERA_FOV   {60.f};
-constexpr float CAMERA_NEAR  {0.1f};
-constexpr float CAMERA_FAR   {100.f};
-constexpr float CAMERA_SPEED {5.f};
+constexpr float CAMERA_FOV         {60.f};
+constexpr float CAMERA_NEAR        {0.1f};
+constexpr float CAMERA_FAR         {100.f};
+constexpr float CAMERA_SPEED       {5.f};
+constexpr float CAMERA_SENSITIVITY {0.05f};
 
 // Vertices and Indices
 GLfloat vertices[] =
@@ -68,6 +68,8 @@ class MainWindow : public crb::Window
       this->VAO1.Unbind();
       this->VBO1.Unbind();
       this->EBO1.Unbind();
+
+      this->bindCamera(this->camera);
     }
 
   protected:
@@ -80,6 +82,13 @@ class MainWindow : public crb::Window
 
       if (!this->getMouseLocked()) return;
 
+      if (this->isKeyPressed(crb::Key::C))
+      { crb::Graphics::usePointMode(); }
+      else if (this->isKeyPressed(crb::Key::V))
+      { crb::Graphics::useLineMode(); }
+      else if (this->isKeyPressed(crb::Key::B))
+      { crb::Graphics::useFillMode(); }
+
       float xFactor {0.f};
       float yFactor {0.f};
       float zFactor {0.f};
@@ -89,9 +98,9 @@ class MainWindow : public crb::Window
       if (this->isKeyPressed(crb::Key::S))
       { zFactor -= 1.f; }
       if (this->isKeyPressed(crb::Key::Spacebar))
-      { yFactor -= 1.f; }
-      if (this->isKeyPressed(crb::Key::LeftShift))
       { yFactor += 1.f; }
+      if (this->isKeyPressed(crb::Key::LeftShift))
+      { yFactor -= 1.f; }
       if (this->isKeyPressed(crb::Key::A))
       { xFactor += 1.f; }
       if (this->isKeyPressed(crb::Key::D))
@@ -106,16 +115,12 @@ class MainWindow : public crb::Window
 
     void render()
     {
-      this->defaultShader.Use();
-      this->VAO1.Bind();
-
-      camera.updatePosition(this->getDeltaTime());
-      camera.updateMatrix();
-      camera.applyMatrix(this->defaultShader);
+      this->bindShader(this->defaultShader);
 
       crb::Space::Mat4 model {1.f};
       defaultShader.SetMatrix4(model, "model");
 
+      this->VAO1.Bind();
       glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
     }
 
@@ -132,7 +137,8 @@ class MainWindow : public crb::Window
       WINDOW_HEIGHT,
       CAMERA_NEAR,
       CAMERA_FAR,
-      CAMERA_SPEED
+      CAMERA_SPEED,
+      CAMERA_SENSITIVITY
     };
 
     crb::Graphics::VAO VAO1;

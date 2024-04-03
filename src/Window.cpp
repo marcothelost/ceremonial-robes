@@ -2,7 +2,18 @@
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-  (void*)window;
+  crb::Window* windowInstance = (crb::Window*)glfwGetWindowUserPointer(window);
+  crb::Camera* boundCamera = windowInstance->getBoundCamera();
+
+  windowInstance->setWidth(width);
+  windowInstance->setHeight(height);
+
+  if (boundCamera != NULL)
+  {
+    boundCamera->setBufferWidth(width);
+    boundCamera->setBufferHeight(height);
+  }
+
   glViewport(0, 0, width, height);
 }
 
@@ -31,6 +42,7 @@ void crb::Window::_initialize()
   }
   glfwMakeContextCurrent(this->glfwInstance);
   glfwSetFramebufferSizeCallback(this->glfwInstance, framebufferSizeCallback);
+  glfwSetWindowUserPointer(this->glfwInstance, this);
   crb::Core::initializeGlew();
 
   glClearColor(
@@ -48,20 +60,38 @@ void crb::Window::_updateDeltaTime()
   this->lastTime = currentTime;
 }
 
-void crb::Window::_updateCursor()
+void crb::Window::_updateCamera()
 {
-  if (this->mouseLocked)
+  if (this->boundShader == NULL || this->boundCamera == NULL)
   {
-    glfwSetInputMode(this->glfwInstance, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     return;
   }
-  glfwSetInputMode(this->glfwInstance, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+  if (this->mouseLocked)
+  {
+    std::pair<float, float> mousePosition = crb::Input::getMousePosition(this->glfwInstance);
+    this->boundCamera->updatePosition(this->getDeltaTime());
+    this->boundCamera->updateRotation(mousePosition);
+  }
+  this->boundCamera->updateMatrix();
+  this->boundCamera->applyMatrix(*this->boundShader);
+}
+
+void crb::Window::_updateCursor()
+{
+  if (!this->mouseLocked)
+  {
+    glfwSetInputMode(this->glfwInstance, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    return;
+  }
+  glfwSetInputMode(this->glfwInstance, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetCursorPos(this->glfwInstance, this->width / 2, this->height / 2);
 }
 
 void crb::Window::_update()
 {
   glfwPollEvents();
   this->_updateDeltaTime();
+  this->_updateCamera();
   this->_updateCursor();
   this->update();
 }

@@ -9,7 +9,8 @@
 
 #include "Core.hpp"
 #include "Color.hpp"
-#include "Keys.hpp"
+#include "Input.hpp"
+#include "Camera.hpp"
 
 namespace crb
 {
@@ -103,6 +104,20 @@ namespace crb
        */
       bool getMouseLocked() const
       { return this->mouseLocked; }
+      /**
+       * @brief Gets the currently bound shader.
+       * 
+       * @return A pointer to the currently bound shader.
+       */
+      crb::Graphics::Shader* getBoundShader() const
+      { return this->boundShader; }
+      /**
+       * @brief Gets the currently bound camera.
+       * 
+       * @return A pointer to the currently bound camera.
+       */
+      crb::Camera* getBoundCamera() const
+      { return this->boundCamera; }
 
       /**
        * @brief Gets the title of the window.
@@ -159,7 +174,25 @@ namespace crb
        * @return True if the key is pressed, false otherwise.
        */
       inline bool isKeyPressed(const crb::Key& key)
-      { return crb::Keys::isPressed(this->glfwInstance, key); }
+      { return crb::Input::isKeyPressed(this->glfwInstance, key); }
+      /**
+       * @brief Binds a shader for rendering.
+       * 
+       * @param shader The shader to bind.
+       */
+      void bindShader(crb::Graphics::Shader& shader)
+      { this->boundShader = &shader; shader.Use(); }
+      /**
+       * @brief Binds a camera for rendering.
+       * 
+       * @param camera The camera to bind.
+       */
+      void bindCamera(crb::Camera& camera)
+      {
+        this->boundCamera = &camera;
+        this->boundCamera->setBufferWidth(this->width);
+        this->boundCamera->setBufferHeight(this->height);
+      }
 
     protected:
       /**
@@ -185,6 +218,9 @@ namespace crb
       GLFWwindow*      glfwInstance {NULL};
       crb::Color::RGBA clearColor   {crb::Color::Black};
 
+      crb::Graphics::Shader* boundShader {NULL};
+      crb::Camera*           boundCamera {NULL};
+
       float deltaTime {0.f};
       float lastTime  {(float)glfwGetTime()};
 
@@ -198,6 +234,10 @@ namespace crb
        * @brief Internal method for updating the time difference between frames.
        */
       void _updateDeltaTime();
+      /**
+       * @brief Internal method for updating the camera.
+       */
+      void _updateCamera();
       /**
        * @brief Internal method for updating the cursor.
        */

@@ -67,7 +67,7 @@ namespace crb
          * @param vec The Vec3 object to add.
          * @return The resulting Vec3 object.
          */
-        crb::Space::Vec3 operator+(const crb::Space::Vec3& vec)
+        crb::Space::Vec3 operator+(const crb::Space::Vec3& vec) const
         {
           return
           {
@@ -84,7 +84,7 @@ namespace crb
          * @param vec The Vec3 object to subtract.
          * @return The resulting Vec3 object.
          */
-        crb::Space::Vec3 operator-(const crb::Space::Vec3& vec)
+        crb::Space::Vec3 operator-(const crb::Space::Vec3& vec) const
         {
           return
           {
@@ -103,7 +103,7 @@ namespace crb
          * @return The resulting Vec3 object.
          */
         template <typename T>
-        crb::Space::Vec3 operator*(const T scalar)
+        crb::Space::Vec3 operator*(const T scalar) const
         {
           return
           {
@@ -198,7 +198,7 @@ namespace crb
      * @param vec The 3D vector to normalize.
      * @return The normalized vector.
      */
-    inline crb::Space::Vec3 normalize(crb::Space::Vec3& vec)
+    inline crb::Space::Vec3 normalize(const crb::Space::Vec3& vec)
     {
       const float length = crb::Space::lengthOf(vec);
       if (length == 0) return crb::Space::Vec3(0.f);
@@ -216,7 +216,7 @@ namespace crb
      * @param vecTwo The second Vec3 object.
      * @return The dot product of the two Vec3 objects.
      */
-    inline float dot(const crb::Space::Vec3& vecOne, crb::Space::Vec3& vecTwo)
+    inline float dot(const crb::Space::Vec3& vecOne, const crb::Space::Vec3& vecTwo)
     { return vecOne.x * vecTwo.x + vecOne.y * vecTwo.y + vecOne.z * vecTwo.z; }
     /**
      * @brief Computes the cross product of two Vec3 objects.
@@ -430,6 +430,15 @@ namespace crb
      * @return The projection matrix.
      */
     crb::Space::Mat4 perspective(const float fov, const float aspect, const float zNear, const float zFar);
+    /**
+     * @brief Creates a view matrix that simulates a camera looking at a target.
+     * 
+     * @param eye The position of the camera.
+     * @param target The position of the target that the camera is looking at.
+     * @param up The up direction of the camera.
+     * @return The view matrix.
+     */
+    crb::Space::Mat4 lookAt(const crb::Space::Vec3& eye, const crb::Space::Vec3& target, const crb::Space::Vec3& up);
   }
 }
 

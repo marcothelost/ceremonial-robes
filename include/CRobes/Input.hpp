@@ -63,9 +63,9 @@ namespace crb
   };
 
    /**
-   * @brief A namespace containing utility functions related to keyboard input in the Ceremonial Robes Engine.
+   * @brief A namespace containing utility functions related to input in the Ceremonial Robes Engine.
    */
-  namespace Keys
+  namespace Input
   {
     /**
      * @brief Checks if a key is currently pressed.
@@ -74,8 +74,22 @@ namespace crb
      * @param key The key to check.
      * @return True if the key is pressed, false otherwise.
      */
-    inline bool isPressed(GLFWwindow* window, const crb::Key& key)
+    inline bool isKeyPressed(GLFWwindow* window, const crb::Key& key)
     { return glfwGetKey(window, key) == GLFW_PRESS; }
+
+    /**
+     * @brief Retrieves the current mouse position.
+     * 
+     * @param window The GLFW window.
+     * @return A pair containing the x and y coordinates of the mouse position.
+     */
+    inline std::pair<float, float> getMousePosition(GLFWwindow* window)
+    {
+      double mouseX;
+      double mouseY;
+      glfwGetCursorPos(window, &mouseX, &mouseY);
+      return { (float)mouseX, (float)mouseY };
+    }
   }
 }
 
