@@ -30,6 +30,56 @@ namespace crb
       {}
 
       /**
+       * @brief Gets the field of view angle of the camera.
+       * 
+       * @return The field of view angle in degrees.
+       */
+      float getFov() const
+      { return this->fov; }
+      /**
+       * @brief Gets the width of the buffer.
+       * 
+       * @return The width of the buffer.
+       */
+      float getBufferWidth() const
+      { return this->bufferWidth; }
+      /**
+       * @brief Gets the height of the buffer.
+       * 
+       * @return The height of the buffer.
+       */
+      float getBufferHeight() const
+      { return this->bufferHeight; }
+      /**
+       * @brief Gets the distance to the near clipping plane.
+       * 
+       * @return The distance to the near clipping plane.
+       */
+      float getZNear() const
+      { return this->zNear; }
+      /**
+       * @brief Gets the distance to the far clipping plane.
+       * 
+       * @return The distance to the far clipping plane.
+       */
+      float getZFar() const
+      { return this->zFar; }
+      /**
+       * @brief Gets the movement speed of the camera.
+       * 
+       * @return The movement speed of the camera.
+       */
+      float getSpeed() const
+      { return this->speed; }
+      /**
+       * @brief Gets the sensitivity of the camera controls.
+       * 
+       * @return The sensitivity of the camera controls.
+       */
+      float getSensitivity() const
+      { return this->sensitivity; }
+
+      /**
        * @brief Sets the field of view angle of the camera.
        * 
        * @param fov The field of view angle in degrees.

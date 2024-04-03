@@ -80,6 +80,19 @@ class MainWindow : public crb::Window
       if (this->isKeyPressed(crb::Key::Escape))
       { this->setMouseLocked(false); }
 
+      if (this->isKeyPressed(crb::Key::F))
+      {
+        if (!this->canFullscreen) return;
+        this->getMaximized()
+          ? this->unmaximize()
+          : this->maximize();
+        this->canFullscreen = false;
+      }
+      else
+      {
+        this->canFullscreen = true;
+      }
+
       if (!this->getMouseLocked()) return;
 
       if (this->isKeyPressed(crb::Key::C))
@@ -105,6 +118,17 @@ class MainWindow : public crb::Window
       { xFactor += 1.f; }
       if (this->isKeyPressed(crb::Key::D))
       { xFactor -= 1.f; }
+
+      if (this->isKeyPressed(crb::Key::Num1))
+      { this->camera.setFov(40.f); }
+      if (this->isKeyPressed(crb::Key::Num2))
+      { this->camera.setFov(60.f); }
+      if (this->isKeyPressed(crb::Key::Num3))
+      { this->camera.setFov(80.f); }
+      if (this->isKeyPressed(crb::Key::Num4))
+      { this->camera.setFov(100.f); }
+      if (this->isKeyPressed(crb::Key::Num5))
+      { this->camera.setFov(120.f); }
 
       this->camera.setMovement({
         xFactor,
@@ -144,6 +168,8 @@ class MainWindow : public crb::Window
     crb::Graphics::VAO VAO1;
     crb::Graphics::VBO VBO1 {vertices, sizeof(vertices)};
     crb::Graphics::EBO EBO1 {indices, sizeof(indices)};
+
+    bool canFullscreen {true};
 };
 
 int main()

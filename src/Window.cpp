@@ -26,6 +26,46 @@ void crb::Window::loop()
   }
 }
 
+void crb::Window::maximize()
+{
+  int xPos;
+  int yPos;
+  glfwGetWindowPos(this->glfwInstance, &xPos, &yPos);
+
+  GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+  const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+  this->cachedX = xPos;
+  this->cachedY = yPos;
+  this->cachedWidth = width;
+  this->cachedHeight = height;
+
+  glfwSetWindowMonitor(
+    this->glfwInstance,
+    monitor,
+    0,
+    0,
+    mode->width,
+    mode->height,
+    mode->refreshRate
+  );
+  this->maximized = true;
+}
+
+void crb::Window::unmaximize()
+{
+  glfwSetWindowMonitor(
+    this->glfwInstance,
+    NULL,
+    this->cachedX,
+    this->cachedY,
+    this->cachedWidth,
+    this->cachedHeight,
+    0
+  );
+  this->maximized = false;
+}
+
 void crb::Window::_initialize()
 {
   this->glfwInstance= glfwCreateWindow(

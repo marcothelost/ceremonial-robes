@@ -46,16 +46,6 @@ namespace crb
       }
 
       /**
-       * @brief Runs the main loop of the window.
-       */
-      void loop();
-      /**
-       * @brief Closes the window.
-       */
-      void close()
-      { glfwSetWindowShouldClose(this->glfwInstance, GLFW_TRUE); }
-
-      /**
        * @brief Gets the width of the window.
        *
        * @return The width of the window.
@@ -98,13 +88,6 @@ namespace crb
       int getFPS() const
       { return round(1.f / this->deltaTime); }
       /**
-       * @brief Checks if the mouse is locked.
-       * 
-       * @return True if the mouse is locked, false otherwise.
-       */
-      bool getMouseLocked() const
-      { return this->mouseLocked; }
-      /**
        * @brief Gets the currently bound shader.
        * 
        * @return A pointer to the currently bound shader.
@@ -118,6 +101,20 @@ namespace crb
        */
       crb::Camera* getBoundCamera() const
       { return this->boundCamera; }
+      /**
+       * @brief Checks if the mouse is locked.
+       * 
+       * @return True if the mouse is locked, false otherwise.
+       */
+      bool getMouseLocked() const
+      { return this->mouseLocked; }
+      /**
+       * @brief Checks if the window is currently maximized.
+       * 
+       * @return True if the window is maximized, false otherwise.
+       */
+      bool getMaximized() const
+      { return this->maximized; }
 
       /**
        * @brief Gets the title of the window.
@@ -158,7 +155,6 @@ namespace crb
           this->clearColor.alpha
         );
       }
-
       /**
        * @brief Sets the mouse lock state.
        * 
@@ -168,6 +164,25 @@ namespace crb
       { this->mouseLocked = state; }
 
       /**
+       * @brief Runs the main loop of the window.
+       */
+      void loop();
+      /**
+       * @brief Closes the window.
+       */
+      void close()
+      { glfwSetWindowShouldClose(this->glfwInstance, GLFW_TRUE); }
+
+      /**
+       * @brief Maximizes the window.
+       */
+      void maximize();
+      /**
+       * @brief Restores the window to its original size after being maximized.
+       */
+      void unmaximize();
+
+      /**
        * @brief Checks if a key is currently pressed.
        * 
        * @param key The key to check.
@@ -175,6 +190,7 @@ namespace crb
        */
       inline bool isKeyPressed(const crb::Key& key)
       { return crb::Input::isKeyPressed(this->glfwInstance, key); }
+
       /**
        * @brief Binds a shader for rendering.
        * 
@@ -215,6 +231,11 @@ namespace crb
       unsigned int height {600u};
       std::string title   {"GLFW"};
 
+      unsigned int cachedX      {0u};
+      unsigned int cachedY      {0u};
+      unsigned int cachedWidth  {800u};
+      unsigned int cachedHeight {600u};
+
       GLFWwindow*      glfwInstance {NULL};
       crb::Color::RGBA clearColor   {crb::Color::Black};
 
@@ -225,6 +246,7 @@ namespace crb
       float lastTime  {(float)glfwGetTime()};
 
       bool mouseLocked {false};
+      bool maximized   {false};
 
       /**
        * @brief Internal method for initializing the window.

@@ -34,14 +34,18 @@ void crb::Camera::updateMatrix()
 {
   crb::Space::Vec3 tempFront {0.f};
 
-  tempFront.x = cosf(crb::Space::radians(this->yaw)) * cosf(crb::Space::radians(this->pitch));
+  const float sinYaw = sinf(crb::Space::radians(this->yaw));
+  const float cosYaw = cosf(crb::Space::radians(this->yaw));
+  const float cosPitch = cosf(crb::Space::radians(this->pitch));
+
+  tempFront.x = cosYaw * cosPitch;
   tempFront.y = sinf(crb::Space::radians(this->pitch));
-  tempFront.z = sinf(crb::Space::radians(this->yaw)) * cosf(crb::Space::radians(this->pitch));
+  tempFront.z = sinYaw * cosPitch;
 
   this->front = {
-    cosf(crb::Space::radians(this->yaw)),
+    cosYaw,
     0.f,
-    sinf(crb::Space::radians(this->yaw)),
+    sinYaw,
   };
 
   crb::Space::Mat4 view {1.f};

@@ -8,3 +8,6 @@ add_library(
   Space.cpp
   Camera.cpp
 )
+
+# Linking Libraries
+target_link_libraries(CRobes PUBLIC ${GLEW_LIBRARIES} ${GLFW_LIBRARIES})
