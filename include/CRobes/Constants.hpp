@@ -12,7 +12,7 @@ namespace crb
   /**
    * @brief The version of the Ceremonial Robes Engine.
    */
-  inline const std::string ENGINE_VERSION {"0.1 InDev"};
+  inline const std::string ENGINE_VERSION {"0.2 InDev"};
   /**
    * @brief The author of the Ceremonial Robes Engine.
    */

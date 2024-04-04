@@ -26,7 +26,7 @@ namespace crb
        * @param sensitivity The sensitivity of the camera controls.
        */
       Camera(const float fov, const float bufferWidth, const float bufferHeight, const float zNear, const float zFar, const float speed, const float sensitivity)
-      : fov(fov), bufferWidth(bufferWidth), bufferHeight(bufferHeight), zNear(zNear), zFar(zFar), speed(speed)
+      : fov(fov), bufferWidth(bufferWidth), bufferHeight(bufferHeight), zNear(zNear), zFar(zFar), speed(speed), sensitivity(sensitivity)
       {}
 
       /**

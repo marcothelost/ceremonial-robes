@@ -32,6 +32,14 @@ namespace crb
     { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
 
     /**
+     * @brief Sets the size of points when rendered in point mode.
+     * 
+     * @param pointSize The size of the points.
+     */
+    inline void setPointSize(const float pointSize)
+    { glPointSize(pointSize); }
+ 
+    /**
      * @class Shader
      * @brief Encapsulates OpenGL shader functionality.
      * 

@@ -12,6 +12,7 @@
 #include "CRobes/Window.hpp"
 #include "CRobes/Space.hpp"
 #include "CRobes/Camera.hpp"
+#include "CRobes/Solids.hpp"
 
 // Constants
 constexpr unsigned int WINDOW_WIDTH  {800u};
@@ -23,7 +24,7 @@ constexpr float CAMERA_FOV         {60.f};
 constexpr float CAMERA_NEAR        {0.1f};
 constexpr float CAMERA_FAR         {100.f};
 constexpr float CAMERA_SPEED       {5.f};
-constexpr float CAMERA_SENSITIVITY {0.05f};
+constexpr float CAMERA_SENSITIVITY {0.1};
 
 // Vertices and Indices
 GLfloat vertices[] =
@@ -50,25 +51,33 @@ class MainWindow : public crb::Window
 
     ~MainWindow()
     {
-      this->VAO1.Delete();
-      this->VBO1.Delete();
-      this->EBO1.Delete();
       this->defaultShader.Delete();
     }
 
     void initialize()
     {
-      this->VAO1.Bind();
-      this->VBO1.Bind();
-      this->EBO1.Bind();
+      crb::Graphics::VAO VAO1;
+      crb::Graphics::VBO VBO1 {vertices, sizeof(vertices)};
+      crb::Graphics::EBO EBO1 {indices, sizeof(indices)};
 
-      this->VAO1.LinkAttribute(this->VBO1, 0, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)0);
-      this->VAO1.LinkAttribute(this->VBO1, 1, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+      VAO1.Bind();
+      VBO1.Bind();
+      EBO1.Bind();
 
-      this->VAO1.Unbind();
-      this->VBO1.Unbind();
-      this->EBO1.Unbind();
+      VAO1.LinkAttribute(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)0);
+      VAO1.LinkAttribute(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 
+      VAO1.Unbind();
+      VBO1.Unbind();
+      EBO1.Unbind();
+
+      this->testSolid = new crb::Solids::Solid(
+        {0.f, 0.f, 0.f},
+        VAO1,
+        VBO1,
+        EBO1,
+        sizeof(indices) / sizeof(GLuint)
+      );
       this->bindCamera(this->camera);
     }
 
@@ -140,11 +149,7 @@ class MainWindow : public crb::Window
     void render()
     {
       this->bindShader(this->defaultShader);
-
-      crb::Space::Mat4 model {1.f};
-      defaultShader.SetMatrix4(model, "model");
-
-      this->VAO1.Bind();
+      this->testSolid->render(this->defaultShader);
       glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
     }
 
@@ -164,10 +169,7 @@ class MainWindow : public crb::Window
       CAMERA_SPEED,
       CAMERA_SENSITIVITY
     };
-
-    crb::Graphics::VAO VAO1;
-    crb::Graphics::VBO VBO1 {vertices, sizeof(vertices)};
-    crb::Graphics::EBO EBO1 {indices, sizeof(indices)};
+    crb::Solids::Solid* testSolid {NULL};
 
     bool canFullscreen {true};
 };
@@ -192,8 +194,9 @@ int main()
   std::cout << '\n';
   crb::Core::printVersionInfo();
 
-  // Line Mode
+  // Line Mode and Settings
   crb::Graphics::useLineMode();
+  crb::Graphics::setPointSize(5.f);
 
   // Main Loop
   window.loop();
