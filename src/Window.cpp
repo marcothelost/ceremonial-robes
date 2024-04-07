@@ -83,6 +83,7 @@ void crb::Window::_initialize()
   glfwMakeContextCurrent(this->glfwInstance);
   glfwSetFramebufferSizeCallback(this->glfwInstance, framebufferSizeCallback);
   glfwSetWindowUserPointer(this->glfwInstance, this);
+  glEnable(GL_DEPTH_TEST);
   crb::Core::initializeGlew();
 
   glClearColor(
@@ -138,7 +139,7 @@ void crb::Window::_update()
 
 void crb::Window::_render()
 {
-  glClear(GL_COLOR_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   this->render();
   glfwSwapBuffers(this->glfwInstance);
 }

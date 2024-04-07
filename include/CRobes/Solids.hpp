@@ -46,7 +46,7 @@ namespace crb
          * 
          * @param shader The shader program to use for rendering.
          */
-        virtual void render(const crb::Graphics::Shader& shader) const;
+        void render(const crb::Graphics::Shader& shader, GLenum mode) const;
 
       private:
         crb::Space::Mat4 model    {1.f};

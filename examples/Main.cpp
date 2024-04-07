@@ -14,6 +14,8 @@
 #include "CRobes/Camera.hpp"
 #include "CRobes/Solids.hpp"
 
+#include "Noise.hpp"
+
 // Constants
 constexpr unsigned int WINDOW_WIDTH  {800u};
 constexpr unsigned int WINDOW_HEIGHT {600u};
@@ -26,22 +28,7 @@ constexpr float CAMERA_FAR         {100.f};
 constexpr float CAMERA_SPEED       {5.f};
 constexpr float CAMERA_SENSITIVITY {0.1};
 
-// Vertices and Indices
-GLfloat vertices[] =
-{
-  -0.5f,  -0.5f, 0.f, 1.f, 1.f, 1.f,
-   0.0f,  -0.5f, 0.f, 1.f, 1.f, 1.f,
-   0.5f,  -0.5f, 0.f, 1.f, 1.f, 1.f,
-  -0.25f,  0.0f, 0.f, 1.f, 1.f, 1.f,
-   0.25f,  0.0f, 0.f, 1.f, 1.f, 1.f,
-   0.0f,   0.5f, 0.f, 1.f, 1.f, 1.f,
-};
-GLuint indices[] =
-{
-  0, 1, 3,
-  1, 2, 4,
-  3, 4, 5,
-};
+const unsigned int segmentCount = 128;
 
 // Window Class
 class MainWindow : public crb::Window
@@ -56,6 +43,48 @@ class MainWindow : public crb::Window
 
     void initialize()
     {
+      GLfloat vertices[(segmentCount + 1) * (segmentCount + 1) * 6] {0.f};
+      GLuint indices[(segmentCount * 2 + 3) * segmentCount] {0};
+
+      const siv::PerlinNoise perlin{123u};
+
+      for (int z = 0; z < segmentCount + 1; z++)
+      {
+        for (int x = 0; x < segmentCount + 1; x++)
+        {
+          int index = z * (segmentCount + 1) * 6 + x * 6;
+          float n = perlin.octave2D_01(x * 0.03f, z * 0.03f, 24);
+
+          vertices[index]     = x * 0.5f;
+          vertices[index + 1] = n * 25.f;
+          vertices[index + 2] = z * 0.5f;
+          vertices[index + 3] = 0.8f - n * 0.7f;
+          vertices[index + 4] = 0.8f - n * 0.7f;
+          vertices[index + 5] = 0.8f - n * 0.7f;
+        }
+      }
+
+      for (int i = 0; i < segmentCount; i++)
+      {
+        for (int j = 0; j <= segmentCount * 2 + 2; j++)
+        {
+          if (j == segmentCount * 2 + 2)
+          {
+            indices[i * (segmentCount * 2 + 2) + j + i] = 65535;
+            continue;
+          }
+          indices[i * (segmentCount * 2 + 2) + j + i] =
+             i * (segmentCount + 1)
+             + (j % 2 == 0 ? j : j + segmentCount)
+             - j / 2;
+        }
+      }
+
+      glEnable(GL_CULL_FACE);
+      glEnable(GL_PRIMITIVE_RESTART);
+      glCullFace(GL_BACK);
+      glPrimitiveRestartIndex(65535);
+
       crb::Graphics::VAO VAO1;
       crb::Graphics::VBO VBO1 {vertices, sizeof(vertices)};
       crb::Graphics::EBO EBO1 {indices, sizeof(indices)};
@@ -76,7 +105,7 @@ class MainWindow : public crb::Window
         VAO1,
         VBO1,
         EBO1,
-        sizeof(indices) / sizeof(GLuint)
+        (segmentCount * 2 + 3) * segmentCount
       );
       this->bindCamera(this->camera);
     }
@@ -149,8 +178,7 @@ class MainWindow : public crb::Window
     void render()
     {
       this->bindShader(this->defaultShader);
-      this->testSolid->render(this->defaultShader);
-      glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+      this->testSolid->render(this->defaultShader, GL_TRIANGLE_STRIP);
     }
 
   private:
@@ -187,7 +215,7 @@ int main()
     WINDOW_TITLE
   };
   window.initialize();
-  window.setClearColor(crb::Color::Black);
+  window.setClearColor({220, 220, 220, 1.f});
 
   // Printing Engine and Version Info
   crb::Core::printEngineInfo();
