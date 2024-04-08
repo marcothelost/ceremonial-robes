@@ -14,8 +14,6 @@
 #include "CRobes/Camera.hpp"
 #include "CRobes/Solids.hpp"
 
-#include "Noise.hpp"
-
 // Constants
 constexpr unsigned int WINDOW_WIDTH  {800u};
 constexpr unsigned int WINDOW_HEIGHT {600u};
@@ -28,7 +26,8 @@ constexpr float CAMERA_FAR         {100.f};
 constexpr float CAMERA_SPEED       {5.f};
 constexpr float CAMERA_SENSITIVITY {0.1};
 
-const unsigned int segmentCount = 128;
+// Solid Factory
+crb::Solids::SolidFactory solidFactory;
 
 // Window Class
 class MainWindow : public crb::Window
@@ -43,70 +42,6 @@ class MainWindow : public crb::Window
 
     void initialize()
     {
-      GLfloat vertices[(segmentCount + 1) * (segmentCount + 1) * 6] {0.f};
-      GLuint indices[(segmentCount * 2 + 3) * segmentCount] {0};
-
-      const siv::PerlinNoise perlin{123u};
-
-      for (int z = 0; z < segmentCount + 1; z++)
-      {
-        for (int x = 0; x < segmentCount + 1; x++)
-        {
-          int index = z * (segmentCount + 1) * 6 + x * 6;
-          float n = perlin.octave2D_01(x * 0.03f, z * 0.03f, 24);
-
-          vertices[index]     = x * 0.5f;
-          vertices[index + 1] = n * 25.f;
-          vertices[index + 2] = z * 0.5f;
-          vertices[index + 3] = 0.8f - n * 0.7f;
-          vertices[index + 4] = 0.8f - n * 0.7f;
-          vertices[index + 5] = 0.8f - n * 0.7f;
-        }
-      }
-
-      for (int i = 0; i < segmentCount; i++)
-      {
-        for (int j = 0; j <= segmentCount * 2 + 2; j++)
-        {
-          if (j == segmentCount * 2 + 2)
-          {
-            indices[i * (segmentCount * 2 + 2) + j + i] = 65535;
-            continue;
-          }
-          indices[i * (segmentCount * 2 + 2) + j + i] =
-             i * (segmentCount + 1)
-             + (j % 2 == 0 ? j : j + segmentCount)
-             - j / 2;
-        }
-      }
-
-      glEnable(GL_CULL_FACE);
-      glEnable(GL_PRIMITIVE_RESTART);
-      glCullFace(GL_BACK);
-      glPrimitiveRestartIndex(65535);
-
-      crb::Graphics::VAO VAO1;
-      crb::Graphics::VBO VBO1 {vertices, sizeof(vertices)};
-      crb::Graphics::EBO EBO1 {indices, sizeof(indices)};
-
-      VAO1.Bind();
-      VBO1.Bind();
-      EBO1.Bind();
-
-      VAO1.LinkAttribute(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)0);
-      VAO1.LinkAttribute(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-
-      VAO1.Unbind();
-      VBO1.Unbind();
-      EBO1.Unbind();
-
-      this->testSolid = new crb::Solids::Solid(
-        {0.f, 0.f, 0.f},
-        VAO1,
-        VBO1,
-        EBO1,
-        (segmentCount * 2 + 3) * segmentCount
-      );
       this->bindCamera(this->camera);
     }
 
@@ -178,7 +113,7 @@ class MainWindow : public crb::Window
     void render()
     {
       this->bindShader(this->defaultShader);
-      this->testSolid->render(this->defaultShader, GL_TRIANGLE_STRIP);
+      this->testSolid.render(this->defaultShader, GL_TRIANGLE_STRIP);
     }
 
   private:
@@ -197,14 +132,18 @@ class MainWindow : public crb::Window
       CAMERA_SPEED,
       CAMERA_SENSITIVITY
     };
-    crb::Solids::Solid* testSolid {NULL};
+    crb::Solids::Solid testSolid {solidFactory.createPlane(
+      {0.f, 0.f, 0.f},
+      4.f,
+      4.f,
+      16
+    )};
 
     bool canFullscreen {true};
 };
 
 int main()
 {
-  // Initializing GLFW
   crb::Core::initializeGlfw();
 
   // Window

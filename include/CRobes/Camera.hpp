@@ -149,7 +149,7 @@ namespace crb
       float sensitivity  {0.1f};
 
       crb::Space::Mat4 matrix   {1.f};
-      crb::Space::Vec3 position {32.f, 35.f, 32.f};
+      crb::Space::Vec3 position {0.f, 0.f, 6.f};
       crb::Space::Vec3 front    {0.f, 0.f, -1.f};
       crb::Space::Vec3 up       {0.f, 1.f, 0.f};
       crb::Space::Vec3 movement {0.f};

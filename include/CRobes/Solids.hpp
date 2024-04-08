@@ -58,6 +58,32 @@ namespace crb
 
         GLuint vertexCount {0};
     };
+
+    /**
+     * @brief A factory class for creating solid objects.
+     */
+    class SolidFactory
+    {
+      public:
+        /**
+         * @brief Default constructor.
+         */
+        SolidFactory()
+        {}
+
+        /**
+         * @brief Creates a plane object.
+         * 
+         * Creates a plane object with the specified parameters.
+         * 
+         * @param position The position of the plane.
+         * @param length The length of the plane.
+         * @param width The width of the plane.
+         * @param segmentCount The number of segments in the plane's geometry.
+         * @return The created plane object.
+         */
+        crb::Solids::Solid createPlane(const crb::Space::Vec3& position, const float length, const float width, const unsigned int segmentCount);
+    };
   }
 }
 
