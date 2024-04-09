@@ -3,6 +3,7 @@ add_library(
   CRobes
   Core.cpp
   File.cpp
+  Image.cpp
   Graphics.cpp
   Window.cpp
   Space.cpp

@@ -8,6 +8,7 @@
 #include "CRobes/Core.hpp"
 #include "CRobes/Color.hpp"
 #include "CRobes/File.hpp"
+#include "CRobes/Image.hpp"
 #include "CRobes/Graphics.hpp"
 #include "CRobes/Window.hpp"
 #include "CRobes/Space.hpp"
@@ -42,7 +43,15 @@ class MainWindow : public crb::Window
 
     void initialize()
     {
+      GLubyte* data;
+      unsigned int width;
+      unsigned int height;
+      bool hasAlpha;
+      crb::Image::loadFromPNG("resources/Textures/soil.png", &data, width, height, hasAlpha);
+      std::cout << width << " " << height << " " << hasAlpha << '\n';
+
       this->bindCamera(this->camera);
+      this->camera.setPosition({8.f, 1.8f, 8.f});
     }
 
   protected:
@@ -134,8 +143,8 @@ class MainWindow : public crb::Window
     };
     crb::Solids::Solid testSolid {solidFactory.createPlane(
       {0.f, 0.f, 0.f},
-      4.f,
-      4.f,
+      16.f,
+      16.f,
       16
     )};
 
