@@ -2,7 +2,7 @@
 #define CRB_IMAGE_HPP
 
 #include <GL/glew.h>
-#include <png.h>
+#include <libpng16/png.h>
 
 #include <stdio.h>
 #include <iostream>

@@ -13,4 +13,4 @@ add_library(
 )
 
 # Linking Libraries
-target_link_libraries(CRobes PUBLIC ${GLEW_LIBRARIES} ${GLFW_LIBRARIES})
+target_link_libraries(CRobes PUBLIC ${GLEW_LIBRARIES} ${GLFW_LIBRARIES} ${PNG_LIBRARIES})
