@@ -2,7 +2,9 @@
 
 void crb::Solids::Solid::render(const crb::Graphics::Shader& shader, GLenum mode) const
 {
-  shader.SetMatrix4(this->model, "model");
+  crb::Space::Mat4 appliedMatrix {this->model};
+  appliedMatrix = crb::Space::translate(appliedMatrix, this->position);
+  shader.SetMatrix4(appliedMatrix, "model");
   this->VAO.Bind();
   glDrawElements(mode, this->vertexCount, GL_UNSIGNED_INT, NULL);
   this->VAO.Unbind();
@@ -43,26 +45,26 @@ crb::Solids::Solid crb::Solids::SolidFactory::createPlane(const crb::Space::Vec3
     }
   }
 
-  crb::Graphics::VAO VAO1;
-  crb::Graphics::VBO VBO1 {vertices, (GLsizeiptr)sizeof(vertices)};
-  crb::Graphics::EBO EBO1 {indices, (GLsizeiptr)sizeof(indices)};
+  crb::Graphics::VAO VAO;
+  crb::Graphics::VBO VBO {vertices, (GLsizeiptr)sizeof(vertices)};
+  crb::Graphics::EBO EBO {indices, (GLsizeiptr)sizeof(indices)};
 
-  VAO1.Bind();
-  VBO1.Bind();
-  EBO1.Bind();
+  VAO.Bind();
+  VBO.Bind();
+  EBO.Bind();
 
-  VAO1.LinkAttribute(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)0);
-  VAO1.LinkAttribute(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+  VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)0);
+  VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
 
-  VAO1.Unbind();
-  VBO1.Unbind();
-  EBO1.Unbind();
+  VAO.Unbind();
+  VBO.Unbind();
+  EBO.Unbind();
 
   return crb::Solids::Solid(
     position,
-    VAO1,
-    VBO1,
-    EBO1,
+    VAO,
+    VBO,
+    EBO,
     (segmentCount * 2 + 3) * segmentCount
   );
 }

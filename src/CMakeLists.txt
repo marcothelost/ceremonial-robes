@@ -8,6 +8,7 @@ add_library(
   Space.cpp
   Camera.cpp
   Solids.cpp
+  GUI.cpp
 )
 
 # Linking Libraries
