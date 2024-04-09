@@ -72,6 +72,9 @@ if(WIN32)
   endforeach()
 endif()
 
+# Resource Files
+file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_SOURCE_DIR}/build/examples)
+
 # Subdirectories
 add_subdirectory(src)
 add_subdirectory(examples)

@@ -84,3 +84,36 @@ void crb::Graphics::VAO::LinkAttribute(const crb::Graphics::VBO& VBO, GLuint lay
   glEnableVertexAttribArray(layout);
   VBO.Unbind();
 }
+
+crb::Graphics::Texture::Texture(const std::string& pngPath, GLenum type) : type(type)
+{
+  glGenTextures(1, &this->ID);
+  glBindTexture(type, this->ID);
+
+  GLubyte* data;
+  unsigned int width;
+  unsigned int height;
+  bool hasAlpha;
+  crb::Image::loadFromPNG(pngPath, &data, width, height, hasAlpha);
+
+  glTexImage2D(
+    type,
+    0,
+    hasAlpha ? GL_RGBA : GL_RGB,
+    width,
+    height,
+    0,
+    hasAlpha ? GL_RGBA : GL_RGB,
+    GL_UNSIGNED_BYTE,
+    data
+  );
+  glGenerateMipmap(type);
+
+  glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+  glBindTexture(type, 0);
+  delete data;
+}
