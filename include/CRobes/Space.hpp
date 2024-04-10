@@ -421,6 +421,18 @@ namespace crb
       return result;
     }
     /**
+     * @brief Generates an orthographic projection matrix.
+     * 
+     * @param left The coordinate for the left vertical clipping plane.
+     * @param right The coordinate for the right vertical clipping plane.
+     * @param top The coordinate for the top horizontal clipping plane.
+     * @param bottom The coordinate for the bottom horizontal clipping plane.
+     * @param zNear The distance to the near clipping plane.
+     * @param zFar The distance to the far clipping plane.
+     * @return The orthographic projection matrix.
+     */
+    crb::Space::Mat4 ortho(const float left, const float right, const float top, const float bottom, const float zNear, const float zFar);
+    /**
      * @brief Generates a perspective projection matrix.
      * 
      * @param fov The field of view angle in degrees.

@@ -12,6 +12,7 @@
 #include "CRobes/Space.hpp"
 #include "CRobes/Camera.hpp"
 #include "CRobes/Solids.hpp"
+#include "CRobes/GUI.hpp"
 
 // Constants
 constexpr unsigned int WINDOW_WIDTH  {800u};
@@ -41,6 +42,36 @@ class MainWindow : public crb::Window
 
     void initialize()
     {
+      GLfloat vertices[] =
+      {
+        0.f,  0.f,  0.f, 0.f, 0.f,
+        16.f, 0.f,  0.f, 1.f, 0.f,
+        0.f,  16.f, 0.f, 0.f, 1.f,
+        16.f, 16.f, 0.f, 1.f, 1.f,
+      };
+      GLuint indices[] =
+      {
+        0, 1, 3,
+        0, 3, 2,
+      };
+
+      crb::Graphics::VAO VAO;
+      crb::Graphics::VBO VBO {vertices, (GLsizeiptr)sizeof(vertices)};
+      crb::Graphics::EBO EBO {indices, (GLsizeiptr)sizeof(indices)};
+
+      VAO.Bind();
+      VBO.Bind();
+      EBO.Bind();
+
+      VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, 5 * sizeof(GLfloat), (void*)0);
+      VAO.LinkAttribute(VBO, 1, 2, GL_FLOAT, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+
+      VAO.Unbind();
+      VBO.Unbind();
+      EBO.Unbind();
+
+      this->crosshair = new crb::GUI::Element({0.f, 0.f, 0.f}, VAO, VBO, EBO);
+
       this->bindCamera(this->camera);
       this->camera.setPosition({8.f, 1.8f, 8.f});
     }
@@ -113,9 +144,18 @@ class MainWindow : public crb::Window
     void render()
     {
       this->bindShader(this->defaultShader);
-      texture.Bind();
-      texture.ApplyUnit(this->defaultShader, 0);
+      this->camera.use3D();
+      this->camera.applyMatrix(this->defaultShader);
+      soilTexture.Bind();
+      soilTexture.ApplyUnit(this->defaultShader, 0);
       this->testSolid.render(this->defaultShader, GL_TRIANGLE_STRIP);
+      this->bindShader(this->guiShader);
+      this->camera.use2D();
+      this->camera.applyMatrix(this->guiShader);
+      crosshairTexture.Bind();
+      crosshairTexture.ApplyUnit(this->guiShader, 0);
+      this->crosshair->render(this->guiShader);
+      this->bindShader(this->defaultShader);
     }
 
   private:
@@ -124,9 +164,19 @@ class MainWindow : public crb::Window
       "resources/Shaders/default.vert",
       "resources/Shaders/default.frag"
     };
-    crb::Graphics::Texture texture
+    crb::Graphics::Shader guiShader
+    {
+      "resources/Shaders/gui.vert",
+      "resources/Shaders/gui.frag"
+    };
+    crb::Graphics::Texture soilTexture
     {
       "resources/Textures/soil.png",
+      GL_TEXTURE_2D
+    };
+    crb::Graphics::Texture crosshairTexture
+    {
+      "resources/Textures/crosshair.png",
       GL_TEXTURE_2D
     };
     crb::Camera camera
@@ -145,6 +195,7 @@ class MainWindow : public crb::Window
       16.f,
       16
     )};
+    crb::GUI::Element* crosshair {NULL};
 
     bool canFullscreen {true};
 };

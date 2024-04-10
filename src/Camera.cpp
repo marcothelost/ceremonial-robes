@@ -51,17 +51,28 @@ void crb::Camera::updateMatrix()
   crb::Space::Mat4 view {1.f};
   crb::Space::Mat4 projection {1.f};
   
-  view = crb::Space::lookAt(
-    this->position,
-    this->position + tempFront,
-    this->up
-  );
-  projection = crb::Space::perspective(
-    this->fov,
-    (float)this->bufferWidth / this->bufferHeight,
-    this->zNear,
-    this->zFar
-  );
+  if (this->using3D)
+  {
+    view = crb::Space::lookAt(
+      this->position,
+      this->position + tempFront,
+      this->up
+    );
+  }
+  projection = this->using3D
+    ? crb::Space::perspective(
+      this->fov,
+      (float)this->bufferWidth / this->bufferHeight,
+      this->zNear,
+      this->zFar
+    ) : crb::Space::ortho(
+      0,
+      this->bufferWidth,
+      0,
+      this->bufferHeight,
+      -1.f,
+      1.f
+    );
 
   this->matrix = view * projection;
 }

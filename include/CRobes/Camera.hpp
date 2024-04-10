@@ -130,6 +130,17 @@ namespace crb
       { this->movement = movement; }
 
       /**
+       * @brief Sets the camera to use 2D mode.
+       */
+      void use2D()
+      { this->using3D = false; this->updateMatrix(); }
+      /**
+       * @brief Sets the camera to use 3D mode.
+       */
+      void use3D()
+      { this->using3D = true; this->updateMatrix(); }
+
+      /**
        * @brief Updates the position of the camera based on its movement and deltaTime.
        * 
        * @param deltaTime The time elapsed since the last update.
@@ -170,6 +181,8 @@ namespace crb
 
       float yaw   {-90.f};
       float pitch {0.f};
+
+      bool using3D {true};
   };
 }
 

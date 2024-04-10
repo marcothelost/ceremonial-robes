@@ -84,9 +84,11 @@ void crb::Window::_initialize()
   glfwSetFramebufferSizeCallback(this->glfwInstance, framebufferSizeCallback);
   glfwSetWindowUserPointer(this->glfwInstance, this);
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
   glEnable(GL_PRIMITIVE_RESTART);
   crb::Core::initializeGlew();
 
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glPrimitiveRestartIndex(65535);
   glClearColor(
     this->clearColor.red,
