@@ -185,6 +185,165 @@ namespace crb
     };
 
     /**
+     * @class Vec2
+     * @brief Represents a 2D vector.
+     * 
+     * This class represents a 2D vector in space with x and y components.
+     */
+    class Vec2
+    {
+      public:
+        /**
+         * @brief Constructs a Vec2 object with the specified x and y components.
+         * 
+         * @param x The x component of the vector.
+         * @param y The y component of the vector.
+         */
+        Vec2(const float x, const float y)
+        : x(x), y(y)
+        {}
+        /**
+         * @brief Default constructor.
+         * 
+         * Initializes the vector to (0, 0).
+         */
+        Vec2()
+        {}
+        /**
+         * @brief Constructs a Vec2 object with all components set to the same scalar value.
+         * 
+         * @param scalar The scalar value to set for all components.
+         */
+        Vec2(const float scalar)
+        : x(scalar), y(scalar)
+        {}
+
+        /**
+         * @brief Overloaded addition operator.
+         * 
+         * Adds two Vec2 objects component-wise and returns the result.
+         * 
+         * @param vec The Vec2 object to add.
+         * @return The resulting Vec2 object.
+         */
+        crb::Space::Vec2 operator+(const crb::Space::Vec2& vec) const
+        {
+          return
+          {
+            this->x + vec.x,
+            this->y + vec.y,
+          };
+        }
+        /**
+         * @brief Overloaded subtraction operator.
+         * 
+         * Subtracts two Vec2 objects component-wise and returns the result.
+         * 
+         * @param vec The Vec2 object to subtract.
+         * @return The resulting Vec2 object.
+         */
+        crb::Space::Vec2 operator-(const crb::Space::Vec2& vec) const
+        {
+          return
+          {
+            this->x - vec.x,
+            this->y - vec.y,
+          };
+        }
+        /**
+         * @brief Overloaded multiplication operator.
+         * 
+         * Multiplies a Vec2 object by a scalar value and returns the result.
+         * 
+         * @tparam T The type of the scalar value.
+         * @param scalar The scalar value to multiply by.
+         * @return The resulting Vec2 object.
+         */
+        template <typename T>
+        crb::Space::Vec2 operator*(const T scalar) const
+        {
+          return
+          {
+            this->x * scalar,
+            this->y * scalar,
+          };
+        }
+        /**
+         * @brief Overloaded multiplication operator (scalar * vector).
+         * 
+         * Multiplies a scalar value by a Vec2 object and returns the result.
+         * 
+         * @tparam T The type of the scalar value.
+         * @param scalar The scalar value to multiply by.
+         * @param vec The Vec2 object to multiply.
+         * @return The resulting Vec2 object.
+         */
+        template <typename T>
+        friend crb::Space::Vec2 operator*(const T scalar, const crb::Space::Vec2& vec)
+        {
+          return
+          {
+            vec.x * scalar,
+            vec.y * scalar,
+          };
+        }
+        /**
+         * @brief Overloaded addition assignment operator.
+         * 
+         * Adds a Vec2 object component-wise to this Vec2 object.
+         * 
+         * @param vec The Vec2 object to add.
+         * @return Reference to this Vec2 object after addition.
+         */
+        crb::Space::Vec2& operator+=(const crb::Space::Vec2& vec)
+        {
+          this->x += vec.x;
+          this->y += vec.y;
+          return *this;
+        }
+        /**
+         * @brief Overloaded subtraction assignment operator.
+         * 
+         * Subtracts a Vec2 object component-wise from this Vec2 object.
+         * 
+         * @param vec The Vec2 object to subtract.
+         * @return Reference to this Vec2 object after subtraction.
+         */
+        crb::Space::Vec2& operator-=(const crb::Space::Vec2& vec)
+        {
+          this->x += vec.x;
+          this->y += vec.y;
+          return *this;
+        }
+        /**
+         * @brief Overloaded multiplication assignment operator.
+         * 
+         * Multiplies this Vec2 object by a scalar value.
+         * 
+         * @param scalar The scalar value to multiply.
+         * @return Reference to this Vec2 object after multiplication.
+         */
+        template <typename T>
+        crb::Space::Vec2& operator*=(const T scalar)
+        {
+          this->x *= scalar;
+          this->y *= scalar;
+          return *this;
+        }
+
+        float x {0.f};
+        float y {0.f};
+    };
+
+    /**
+     * @brief Calculates the length of a 2D vector.
+     * 
+     * @param vec The 2D vector.
+     * @return The length of the vector.
+     */
+    inline float lengthOf(const crb::Space::Vec2& vec)
+    { return sqrtf(pow(vec.x, 2) + pow(vec.y, 2)); }
+    /**
      * @brief Calculates the length of a 3D vector.
      * 
      * @param vec The 3D vector.
@@ -192,6 +351,22 @@ namespace crb
      */
     inline float lengthOf(const crb::Space::Vec3& vec)
     { return sqrtf(pow(vec.x, 2) + pow(vec.y, 2) + pow(vec.z, 2)); }
+    /**
+     * @brief Normalizes a 2D vector.
+     * 
+     * @param vec The 2D vector to normalize.
+     * @return The normalized vector.
+     */
+    inline crb::Space::Vec2 normalize(const crb::Space::Vec2& vec)
+    {
+      const float length = crb::Space::lengthOf(vec);
+      if (length == 0) return crb::Space::Vec2(0.f);
+      return
+      {
+        vec.x / length,
+        vec.y / length
+      };
+    }
     /**
      * @brief Normalizes a 3D vector.
      * 
@@ -218,6 +393,15 @@ namespace crb
      */
     inline float dot(const crb::Space::Vec3& vecOne, const crb::Space::Vec3& vecTwo)
     { return vecOne.x * vecTwo.x + vecOne.y * vecTwo.y + vecOne.z * vecTwo.z; }
+    /**
+     * @brief Computes the dot product of two Vec2 objects.
+     * 
+     * @param vecOne The first Vec2 object.
+     * @param vecTwo The second Vec2 object.
+     * @return The dot product of the two Vec2 objects.
+     */
+    inline float dot(const crb::Space::Vec2& vecOne, const crb::Space::Vec2& vecTwo)
+    { return vecOne.x * vecTwo.x + vecOne.y * vecTwo.y; }
     /**
      * @brief Computes the cross product of two Vec3 objects.
      * 

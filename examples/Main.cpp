@@ -70,7 +70,7 @@ class MainWindow : public crb::Window
       VBO.Unbind();
       EBO.Unbind();
 
-      this->crosshair = new crb::GUI::Element({0.f, 0.f, 0.f}, VAO, VBO, EBO);
+      this->crosshair = new crb::GUI::Element({0.f, 0.f}, VAO, VBO, EBO);
 
       this->bindCamera(this->camera);
       this->camera.setPosition({8.f, 1.8f, 8.f});
@@ -79,6 +79,13 @@ class MainWindow : public crb::Window
   protected:
     void update()
     {
+      const unsigned int bufferWidth = this->getWidth();
+      const unsigned int bufferHeight = this->getHeight();
+      this->crosshair->setPosition({
+        (float)bufferWidth / 2.f - 8.f,
+        (float)bufferHeight / 2.f - 8.f
+      });
+
       if (this->isKeyPressed(crb::Key::E))
       { this->setMouseLocked(true); }
       if (this->isKeyPressed(crb::Key::Escape))

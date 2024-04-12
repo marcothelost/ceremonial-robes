@@ -20,14 +20,22 @@ namespace crb
         /**
          * @brief Constructs an Element object with the specified parameters.
          * 
-         * @param position The position of the element in 3D space.
+         * @param position The position of the element in 2D space.
          * @param VAO The Vertex Array Object (VAO) of the element.
          * @param VBO The Vertex Buffer Object (VBO) of the element.
          * @param EBO The Element Buffer Object (EBO) of the element.
          */
-        Element(const crb::Space::Vec3& position, const crb::Graphics::VAO& VAO, const crb::Graphics::VBO& VBO, const crb::Graphics::EBO& EBO)
+        Element(const crb::Space::Vec2& position, const crb::Graphics::VAO& VAO, const crb::Graphics::VBO& VBO, const crb::Graphics::EBO& EBO)
         : position(position), VAO(VAO), VBO(VBO), EBO(EBO)
         {}
+
+        /**
+         * @brief Sets the position of the element in 2D space.
+         * 
+         * @param position The new position of the element.
+         */
+        void setPosition(const crb::Space::Vec2& position)
+        { this->position = position; }
 
         /**
          * @brief Renders the GUI element.
@@ -41,7 +49,7 @@ namespace crb
         crb::Graphics::VBO VBO;
         crb::Graphics::EBO EBO;
 
-        crb::Space::Vec3 position {0.f};
+        crb::Space::Vec2 position {0.f};
     };
   }
 }
