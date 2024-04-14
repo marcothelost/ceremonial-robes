@@ -118,6 +118,11 @@ namespace crb
     {
       public:
         /**
+         * @brief Constructs a default VBO object.
+         */
+        VBO()
+        {}
+        /**
          * @brief Constructs a VBO object with the specified vertex data.
          *
          * @param vertices An array of GLfloat containing vertex data.
@@ -164,6 +169,11 @@ namespace crb
     class EBO
     {
       public:
+        /**
+         * @brief Constructs a default EBO object.
+         */
+        EBO()
+        {}
         /**
          * @brief Constructs an EBO object with the specified indices.
          *

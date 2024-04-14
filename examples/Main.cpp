@@ -42,36 +42,6 @@ class MainWindow : public crb::Window
 
     void initialize()
     {
-      GLfloat vertices[] =
-      {
-        0.f,  0.f,  0.f, 0.f, 0.f,
-        16.f, 0.f,  0.f, 1.f, 0.f,
-        0.f,  16.f, 0.f, 0.f, 1.f,
-        16.f, 16.f, 0.f, 1.f, 1.f,
-      };
-      GLuint indices[] =
-      {
-        0, 1, 3,
-        0, 3, 2,
-      };
-
-      crb::Graphics::VAO VAO;
-      crb::Graphics::VBO VBO {vertices, (GLsizeiptr)sizeof(vertices)};
-      crb::Graphics::EBO EBO {indices, (GLsizeiptr)sizeof(indices)};
-
-      VAO.Bind();
-      VBO.Bind();
-      EBO.Bind();
-
-      VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, 5 * sizeof(GLfloat), (void*)0);
-      VAO.LinkAttribute(VBO, 1, 2, GL_FLOAT, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-
-      VAO.Unbind();
-      VBO.Unbind();
-      EBO.Unbind();
-
-      this->crosshair = new crb::GUI::Element({0.f, 0.f}, VAO, VBO, EBO);
-
       this->bindCamera(this->camera);
       this->camera.setPosition({8.f, 1.8f, 8.f});
     }
@@ -81,7 +51,7 @@ class MainWindow : public crb::Window
     {
       const unsigned int bufferWidth = this->getWidth();
       const unsigned int bufferHeight = this->getHeight();
-      this->crosshair->setPosition({
+      this->crosshair.setPosition({
         (float)bufferWidth / 2.f - 8.f,
         (float)bufferHeight / 2.f - 8.f
       });
@@ -161,7 +131,7 @@ class MainWindow : public crb::Window
       this->camera.applyMatrix(this->guiShader);
       crosshairTexture.Bind();
       crosshairTexture.ApplyUnit(this->guiShader, 0);
-      this->crosshair->render(this->guiShader);
+      this->crosshair.render(this->guiShader);
       this->bindShader(this->defaultShader);
     }
 
@@ -202,7 +172,12 @@ class MainWindow : public crb::Window
       16.f,
       16
     )};
-    crb::GUI::Element* crosshair {NULL};
+    crb::GUI::Element crosshair {
+      {0.f, 0.f}, 0.f, 0.f, 16.f, 16.f
+    };
+    crb::GUI::Element slot {
+      {0.f, 0.f}, 0.f, 0.f, 32.f, 32.f
+    };
 
     bool canFullscreen {true};
 };

@@ -17,17 +17,7 @@ namespace crb
     class Element
     {
       public:
-        /**
-         * @brief Constructs an Element object with the specified parameters.
-         * 
-         * @param position The position of the element in 2D space.
-         * @param VAO The Vertex Array Object (VAO) of the element.
-         * @param VBO The Vertex Buffer Object (VBO) of the element.
-         * @param EBO The Element Buffer Object (EBO) of the element.
-         */
-        Element(const crb::Space::Vec2& position, const crb::Graphics::VAO& VAO, const crb::Graphics::VBO& VBO, const crb::Graphics::EBO& EBO)
-        : position(position), VAO(VAO), VBO(VBO), EBO(EBO)
-        {}
+        Element(const crb::Space::Vec2& position, const float x, const float y, const float width, const float height);
 
         /**
          * @brief Sets the position of the element in 2D space.
