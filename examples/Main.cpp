@@ -1,6 +1,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
+#include <vector>
 #include <iostream>
 #include <string>
 
@@ -17,7 +18,7 @@
 // Constants
 constexpr unsigned int WINDOW_WIDTH  {800u};
 constexpr unsigned int WINDOW_HEIGHT {600u};
-const     std::string  WINDOW_TITLE  {"GLFW"};
+const     std::string  WINDOW_TITLE  {crb::ENGINE_NAME + " " + crb::ENGINE_VERSION};
 
 // Camera Settings
 constexpr float CAMERA_FOV         {60.f};
@@ -44,6 +45,20 @@ class MainWindow : public crb::Window
     {
       this->bindCamera(this->camera);
       this->camera.setPosition({8.f, 1.8f, 8.f});
+
+      this->chunks.reserve(9);
+      for (int x = 0; x < 3; x++)
+      {
+        for (int z = 0; z < 3; z++)
+        {
+          this->chunks.emplace_back(solidFactory.createPlane(
+            {(x - 1) * 16.f, 0.f, (z - 1) * 16.f},
+            16.f,
+            16.f,
+            16
+          ));
+        }
+      }
     }
 
   protected:
@@ -125,7 +140,10 @@ class MainWindow : public crb::Window
       this->camera.applyMatrix(this->defaultShader);
       soilTexture.Bind();
       soilTexture.ApplyUnit(this->defaultShader, 0);
-      this->testSolid.render(this->defaultShader, GL_TRIANGLE_STRIP);
+      for (const crb::Solids::Solid& chunk : this->chunks)
+      {
+        chunk.render(this->defaultShader, GL_TRIANGLE_STRIP);
+      }
       this->bindShader(this->guiShader);
       this->camera.use2D();
       this->camera.applyMatrix(this->guiShader);
@@ -166,18 +184,10 @@ class MainWindow : public crb::Window
       CAMERA_SPEED,
       CAMERA_SENSITIVITY
     };
-    crb::Solids::Solid testSolid {solidFactory.createPlane(
-      {0.f, 0.f, 0.f},
-      16.f,
-      16.f,
-      16
-    )};
     crb::GUI::Element crosshair {
       {0.f, 0.f}, 0.f, 0.f, 16.f, 16.f
     };
-    crb::GUI::Element slot {
-      {0.f, 0.f}, 0.f, 0.f, 32.f, 32.f
-    };
+    std::vector<crb::Solids::Solid> chunks;
 
     bool canFullscreen {true};
 };

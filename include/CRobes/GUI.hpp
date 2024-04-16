@@ -35,9 +35,9 @@ namespace crb
         void render(const crb::Graphics::Shader& shader) const;
 
       private:
-        crb::Graphics::VAO VAO;
-        crb::Graphics::VBO VBO;
-        crb::Graphics::EBO EBO;
+        crb::Graphics::VAO* VAO {NULL};
+        crb::Graphics::VBO* VBO {NULL};
+        crb::Graphics::EBO* EBO {NULL};
 
         crb::Space::Vec2 position {0.f};
     };

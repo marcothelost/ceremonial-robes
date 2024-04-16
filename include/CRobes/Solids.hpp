@@ -22,23 +22,40 @@ namespace crb
         /**
          * @brief Constructs a Solid object with the specified parameters.
          * 
-         * @param position The position of the solid object.
-         * @param VAO The vertex array object (VAO) associated with the object's geometry.
-         * @param VBO The vertex buffer object (VBO) containing the object's vertex data.
-         * @param EBO The element buffer object (EBO) containing the object's index data.
-         * @param vertexCount The number of vertices in the object's geometry.
+         * @param position The position of the solid in 3D space.
+         * @param vertices An array of GLfloat containing vertex data.
+         * @param verticesSize The size of the vertex data array.
+         * @param indices An array of GLuint containing index data.
+         * @param indicesSize The size of the index data array.
          */
-        Solid(const crb::Space::Vec3& position, const crb::Graphics::VAO VAO, const crb::Graphics::VBO VBO, const crb::Graphics::EBO EBO, const GLuint vertexCount)
-        : position(position), VAO(VAO), VBO(VBO), EBO(EBO), vertexCount(vertexCount)
-        {}
+        Solid(const crb::Space::Vec3& position, GLfloat vertices[], GLsizeiptr verticesSize, GLuint indices[], GLsizeiptr indicesSize);
         /**
          * @brief Destructor to release associated OpenGL resources.
          */
         ~Solid()
         {
-          this->VAO.Delete();
-          this->VBO.Delete();
-          this->EBO.Delete();
+          if (this->VAO != NULL) this->VAO->Delete();
+          if (this->VBO != NULL) this->VBO->Delete();
+          if (this->EBO != NULL) this->EBO->Delete();
+        }
+        /**
+         * @brief Move constructor for Solid objects.
+         *
+         * @param other Another Solid object.
+         */
+        Solid(crb::Solids::Solid&& other)
+        {
+          this->VAO = other.VAO;
+          this->VBO = other.VBO;
+          this->EBO = other.EBO;
+          this->position = other.position;
+          this->vertexCount = other.vertexCount;
+          
+          other.VAO = NULL;
+          other.VBO = NULL;
+          other.EBO = NULL;
+          other.position = {0.f};
+          other.vertexCount = 0;
         }
 
         /**
@@ -52,9 +69,9 @@ namespace crb
         crb::Space::Mat4 model    {1.f};
         crb::Space::Vec3 position {0.f};
 
-        crb::Graphics::VAO VAO;
-        crb::Graphics::VBO VBO;
-        crb::Graphics::EBO EBO;
+        crb::Graphics::VAO* VAO {NULL};
+        crb::Graphics::VBO* VBO {NULL};
+        crb::Graphics::EBO* EBO {NULL};
 
         GLuint vertexCount {0};
     };

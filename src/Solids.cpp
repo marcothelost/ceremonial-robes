@@ -1,13 +1,33 @@
 #include "CRobes/Solids.hpp"
 
+crb::Solids::Solid::Solid(const crb::Space::Vec3& position, GLfloat vertices[], GLsizeiptr verticesSize, GLuint indices[], GLsizeiptr indicesSize)
+: position(position), vertexCount(indicesSize / sizeof(GLuint))
+{
+  this->VAO = new crb::Graphics::VAO();
+  this->VBO = new crb::Graphics::VBO(vertices, verticesSize);
+  this->EBO = new crb::Graphics::EBO(indices, indicesSize);
+
+  this->VAO->Bind();
+  this->VBO->Bind();
+  this->EBO->Bind();
+
+  this->VAO->LinkAttribute(*this->VBO, 0, 3, GL_FLOAT, 8 * sizeof(GLfloat), (void*)0);
+  this->VAO->LinkAttribute(*this->VBO, 1, 3, GL_FLOAT, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+  this->VAO->LinkAttribute(*this->VBO, 2, 2, GL_FLOAT, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+
+  this->VAO->Unbind();
+  this->VBO->Unbind();
+  this->EBO->Unbind();
+}
+
 void crb::Solids::Solid::render(const crb::Graphics::Shader& shader, GLenum mode) const
 {
   crb::Space::Mat4 appliedMatrix {this->model};
   appliedMatrix = crb::Space::translate(appliedMatrix, this->position);
   shader.SetMatrix4(appliedMatrix, "model");
-  this->VAO.Bind();
+  this->VAO->Bind();
   glDrawElements(mode, this->vertexCount, GL_UNSIGNED_INT, NULL);
-  this->VAO.Unbind();
+  this->VAO->Unbind();
 }
 
 crb::Solids::Solid crb::Solids::SolidFactory::createPlane(const crb::Space::Vec3& position, const float length, const float width, const unsigned int segmentCount)
@@ -47,27 +67,11 @@ crb::Solids::Solid crb::Solids::SolidFactory::createPlane(const crb::Space::Vec3
     }
   }
 
-  crb::Graphics::VAO VAO;
-  crb::Graphics::VBO VBO {vertices, (GLsizeiptr)sizeof(vertices)};
-  crb::Graphics::EBO EBO {indices, (GLsizeiptr)sizeof(indices)};
-
-  VAO.Bind();
-  VBO.Bind();
-  EBO.Bind();
-
-  VAO.LinkAttribute(VBO, 0, 3, GL_FLOAT, 8 * sizeof(GLfloat), (void*)0);
-  VAO.LinkAttribute(VBO, 1, 3, GL_FLOAT, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-  VAO.LinkAttribute(VBO, 2, 2, GL_FLOAT, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
-
-  VAO.Unbind();
-  VBO.Unbind();
-  EBO.Unbind();
-
   return crb::Solids::Solid(
     position,
-    VAO,
-    VBO,
-    EBO,
-    (segmentCount * 2 + 3) * segmentCount
+    vertices,
+    sizeof(vertices),
+    indices,
+    sizeof(indices)
   );
 }
