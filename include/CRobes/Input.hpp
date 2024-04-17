@@ -61,6 +61,14 @@ namespace crb
     Y = GLFW_KEY_Y,
     Z = GLFW_KEY_Z,
   };
+  /**
+   * @brief Enumeration of common mouse buttons.
+   */
+  enum MouseButton
+  {
+    LeftButton = GLFW_MOUSE_BUTTON_LEFT,
+    RightButton = GLFW_MOUSE_BUTTON_RIGHT,
+  };
 
    /**
    * @brief A namespace containing utility functions related to input in the Ceremonial Robes Engine.
@@ -76,6 +84,15 @@ namespace crb
      */
     inline bool isKeyPressed(GLFWwindow* window, const crb::Key& key)
     { return glfwGetKey(window, key) == GLFW_PRESS; }
+    /**
+     * @brief Checks if a mouse button is currently pressed.
+     * 
+     * @param window The GLFW window.
+     * @param mouseButton The mouse button to check.
+     * @return True if the mouse button is pressed, false otherwise.
+     */
+    inline bool isMouseButtonPressed(GLFWwindow* window, const crb::MouseButton& mouseButton)
+    { return glfwGetMouseButton(window, mouseButton) == GLFW_PRESS; }
 
     /**
      * @brief Retrieves the current mouse position.

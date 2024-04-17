@@ -94,6 +94,34 @@ namespace crb
           }
           return *this;
         }
+        /**
+         * @brief Copy assignment operator for Solid objects.
+         *
+         * @param other Another Solid object.
+         * @return A reference to the assigned object.
+         */
+        crb::Solids::Solid& operator=(crb::Solids::Solid&& other)
+        {
+          if (this != &other)
+          {
+            if (this->VAO != NULL) delete this->VAO;
+            if (this->VBO != NULL) delete this->VBO;
+            if (this->EBO != NULL) delete this->EBO;
+
+            this->VAO = other.VAO;
+            this->VBO = other.VBO;
+            this->EBO = other.EBO;
+            this->position = other.position;
+            this->vertexCount = other.vertexCount;
+
+            other.VAO = NULL;
+            other.VBO = NULL;
+            other.EBO = NULL;
+            other.position = {0.f};
+            other.vertexCount = 0;
+          }
+          return *this;
+        }
 
         /**
          * @brief Gets the position of the solid.

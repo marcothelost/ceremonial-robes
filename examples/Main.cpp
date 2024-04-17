@@ -2,6 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <vector>
+#include <algorithm>
 #include <iostream>
 #include <string>
 
@@ -24,12 +25,12 @@ const     std::string  WINDOW_TITLE  {crb::ENGINE_NAME + " " + crb::ENGINE_VERSI
 // Camera Settings
 constexpr float CAMERA_FOV         {60.f};
 constexpr float CAMERA_NEAR        {0.1f};
-constexpr float CAMERA_FAR         {100.f};
+constexpr float CAMERA_FAR         {512.f};
 constexpr float CAMERA_SPEED       {5.f};
 constexpr float CAMERA_SENSITIVITY {0.1};
 
 // Settings
-constexpr unsigned int RENDER_DISTANCE {2};
+constexpr unsigned int RENDER_DISTANCE {8};
 
 // Camera Position
 const crb::Space::Vec3 defaultCameraPosition {8.f, 1.8f, 8.f};
@@ -52,8 +53,8 @@ class MainWindow : public crb::Window
     {
       this->bindCamera(this->camera);
       this->camera.setPosition(defaultCameraPosition);
+      this->chunks.reserve(pow(RENDER_DISTANCE * 2 - 1, 2));
 
-      this->chunks.reserve(RENDER_DISTANCE * RENDER_DISTANCE * 50);
       for (int z = 0; z < 3; z++)
       {
         for (int x = 0; x < 3; x++)
@@ -93,6 +94,22 @@ class MainWindow : public crb::Window
     void updateChunks()
     {
       std::vector<std::pair<int, int>> requiredChunks = this->calculateRequiredChunks();
+
+      this->chunks.erase(std::remove_if(
+        this->chunks.begin(),
+        this->chunks.end(),
+        [&](const crb::Solids::Solid& chunk)
+        {
+          for (const auto& chunkPosition : requiredChunks)
+          {
+            if (
+              crb::Space::getChunkX(chunk.getPosition().x) == chunkPosition.first &&
+              crb::Space::getChunkZ(chunk.getPosition().z) == chunkPosition.second
+            ) return false;
+          }
+          return true;
+        }
+      ), this->chunks.end());
 
       for (const auto& chunkPosition : requiredChunks)
       {
@@ -181,6 +198,15 @@ class MainWindow : public crb::Window
       { this->camera.setFov(100.f); }
       if (this->isKeyPressed(crb::Key::Num5))
       { this->camera.setFov(120.f); }
+
+      if (this->isMouseButtonPressed(crb::MouseButton::LeftButton))
+      {
+        this->camera.setSpeed(CAMERA_SPEED * 5.f);
+      }
+      else
+      {
+        this->camera.setSpeed(CAMERA_SPEED);
+      }
 
       this->camera.setMovement({
         xFactor,
