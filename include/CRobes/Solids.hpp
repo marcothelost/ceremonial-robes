@@ -57,6 +57,72 @@ namespace crb
           other.position = {0.f};
           other.vertexCount = 0;
         }
+        /**
+         * @brief Copy constructor for Solid objects.
+         *
+         * @param other Another Solid object.
+         */
+        Solid(const crb::Solids::Solid& other)
+        {
+          this->VAO = (other.VAO != NULL) ? new crb::Graphics::VAO(*other.VAO) : NULL;
+          this->VBO = (other.VBO != NULL) ? new crb::Graphics::VBO(*other.VBO) : NULL;
+          this->EBO = (other.EBO != NULL) ? new crb::Graphics::EBO(*other.EBO) : NULL;
+        
+          this->position = other.position;
+          this->vertexCount = other.vertexCount;
+        }
+        /**
+         * @brief Copy assignment operator for Solid objects.
+         *
+         * @param other Another Solid object.
+         * @return A reference to the assigned object.
+         */
+        crb::Solids::Solid& operator=(const crb::Solids::Solid& other)
+        {
+          if (this != &other)
+          {
+            if (this->VAO != NULL) delete this->VAO;
+            if (this->VBO != NULL) delete this->VBO;
+            if (this->EBO != NULL) delete this->EBO;
+
+            this->VAO = (other.VAO != NULL) ? new crb::Graphics::VAO(*other.VAO) : NULL;
+            this->VBO = (other.VBO != NULL) ? new crb::Graphics::VBO(*other.VBO) : NULL;
+            this->EBO = (other.EBO != NULL) ? new crb::Graphics::EBO(*other.EBO) : NULL;
+          
+            this->position = other.position;
+            this->vertexCount = other.vertexCount;
+          }
+          return *this;
+        }
+
+        /**
+         * @brief Gets the position of the solid.
+         * 
+         * @return The position of the solid in 3D space.
+         */
+        crb::Space::Vec3 getPosition() const
+        { return this->position; }
+        /**
+         * @brief Gets the x-coordinate of the solid's position.
+         * 
+         * @return The x-coordinate of the solid's position.
+         */
+        float getX() const
+        { return this->position.x; }
+        /**
+         * @brief Gets the y-coordinate of the solid's position.
+         * 
+         * @return The y-coordinate of the solid's position.
+         */
+        float getY() const
+        { return this->position.y; }
+        /**
+         * @brief Gets the z-coordinate of the solid's position.
+         * 
+         * @return The z-coordinate of the solid's position.
+         */
+        float getZ() const
+        { return this->position.z; }
 
         /**
          * @brief Renders the solid object using the specified shader program.

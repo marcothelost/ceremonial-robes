@@ -385,6 +385,22 @@ namespace crb
       };
     }
     /**
+     * @brief Calculates the X-coordinate of the chunk containing the specified position.
+     * 
+     * @param position The position in 3D space.
+     * @return The X-coordinate of the chunk.
+     */
+    inline int getChunkX(const crb::Space::Vec3& position)
+    { return (int)floor(position.x / crb::CHUNK_SIZE); };
+    /**
+     * @brief Calculates the Z-coordinate of the chunk containing the specified position.
+     * 
+     * @param position The position in 3D space.
+     * @return The Z-coordinate of the chunk.
+     */
+    inline int getChunkZ(const crb::Space::Vec3& position)
+    { return (int)floor(position.z / crb::CHUNK_SIZE); };
+    /**
      * @brief Computes the dot product of two Vec3 objects.
      * 
      * @param vecOne The first Vec3 object.

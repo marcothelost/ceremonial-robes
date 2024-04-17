@@ -14,8 +14,9 @@
 #include "CRobes/Camera.hpp"
 #include "CRobes/Solids.hpp"
 #include "CRobes/GUI.hpp"
+#include "CRobes/Debug.hpp"
 
-// Constants
+// Window Settings
 constexpr unsigned int WINDOW_WIDTH  {800u};
 constexpr unsigned int WINDOW_HEIGHT {600u};
 const     std::string  WINDOW_TITLE  {crb::ENGINE_NAME + " " + crb::ENGINE_VERSION};
@@ -26,6 +27,12 @@ constexpr float CAMERA_NEAR        {0.1f};
 constexpr float CAMERA_FAR         {100.f};
 constexpr float CAMERA_SPEED       {5.f};
 constexpr float CAMERA_SENSITIVITY {0.1};
+
+// Settings
+constexpr unsigned int RENDER_DISTANCE {2};
+
+// Camera Position
+const crb::Space::Vec3 defaultCameraPosition {8.f, 1.8f, 8.f};
 
 // Solid Factory
 crb::Solids::SolidFactory solidFactory;
@@ -44,26 +51,75 @@ class MainWindow : public crb::Window
     void initialize()
     {
       this->bindCamera(this->camera);
-      this->camera.setPosition({8.f, 1.8f, 8.f});
+      this->camera.setPosition(defaultCameraPosition);
 
-      this->chunks.reserve(9);
-      for (int x = 0; x < 3; x++)
+      this->chunks.reserve(RENDER_DISTANCE * RENDER_DISTANCE * 50);
+      for (int z = 0; z < 3; z++)
       {
-        for (int z = 0; z < 3; z++)
+        for (int x = 0; x < 3; x++)
         {
           this->chunks.emplace_back(solidFactory.createPlane(
-            {(x - 1) * 16.f, 0.f, (z - 1) * 16.f},
-            16.f,
-            16.f,
-            16
+            {(x - 1) * crb::CHUNK_SIZE, 0.f, (z - 1) * crb::CHUNK_SIZE},
+            crb::CHUNK_SIZE,
+            crb::CHUNK_SIZE,
+            crb::CHUNK_SEGMENTS
           ));
         }
       }
     }
 
   protected:
+    std::vector<std::pair<int, int>> calculateRequiredChunks()
+    {
+      std::vector<std::pair<int, int>> chunks;
+
+      int cameraChunkX = crb::Space::getChunkX(this->camera.getPosition());
+      int cameraChunkZ = crb::Space::getChunkZ(this->camera.getPosition());
+
+      for (int z = 0; z < RENDER_DISTANCE * 2 - 1; z++)
+      {
+        for (int x = 0; x < RENDER_DISTANCE * 2 - 1; x++)
+        {
+          chunks.push_back(std::pair(
+            x - RENDER_DISTANCE + cameraChunkX + 1,
+            z - RENDER_DISTANCE + cameraChunkZ + 1
+          ));
+        }
+      }
+
+      return chunks;
+    }
+
+    void updateChunks()
+    {
+      std::vector<std::pair<int, int>> requiredChunks = this->calculateRequiredChunks();
+
+      for (const auto& chunkPosition : requiredChunks)
+      {
+        bool chunkFound {false};
+        for (const auto& chunk : this->chunks)
+        {
+          if (
+            crb::Space::getChunkX(chunk.getPosition().x) == chunkPosition.first &&
+            crb::Space::getChunkZ(chunk.getPosition().z) == chunkPosition.second
+          ) chunkFound = true;
+        }
+        if (!chunkFound)
+        {
+          this->chunks.emplace_back(solidFactory.createPlane(
+            {chunkPosition.first * crb::CHUNK_SIZE, 0.f, chunkPosition.second * crb::CHUNK_SIZE},
+            crb::CHUNK_SIZE,
+            crb::CHUNK_SIZE,
+            crb::CHUNK_SEGMENTS
+          ));
+        }
+      }
+    }
+
     void update()
     {
+      this->updateChunks();
+
       const unsigned int bufferWidth = this->getWidth();
       const unsigned int bufferHeight = this->getHeight();
       this->crosshair.setPosition({
