@@ -51,22 +51,20 @@ namespace crb
     };
 
     /**
-     * @brief Chunk generation strategy that generates terrain using sine function.
+     * @brief Chunk generation strategy that generates even chunk positions.
      */
-    class SinChunkStrategy : public ChunkStrategy
+    class EvenChunkStrategy : public ChunkStrategy
     {
       public:
         /**
-         * @brief Generates the position of a chunk using sine function.
+         * @brief Generates the position for a chunk based on the provided coordinates.
          * 
          * @param x The x-coordinate of the chunk.
          * @param z The z-coordinate of the chunk.
-         * @return The generated position of the chunk using sine function.
+         * @return The generated position for the chunk.
          */
-        float generatePosition(float x, float y) const
-        {
-          return sinf(x);
-        }
+        float generatePosition(float x, float z) const
+        { return (int)x % 2; }
     };
 
     /**
@@ -115,6 +113,12 @@ namespace crb
 
         std::vector<crb::Solids::Solid> chunks;
 
+        /**
+         * @brief Calculates the visible chunks based on the camera position.
+         * 
+         * @param cameraPosition The position of the camera.
+         * @return A vector of pairs representing the visible chunk coordinates.
+         */
         std::vector<std::pair<int, int>> _calculateVisibleChunks(const crb::Space::Vec3& cameraPosition);
     };
   }

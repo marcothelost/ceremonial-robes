@@ -11,9 +11,10 @@ crb::Solids::Solid::Solid(const crb::Space::Vec3& position, GLfloat vertices[], 
   this->VBO->Bind();
   this->EBO->Bind();
 
-  this->VAO->LinkAttribute(*this->VBO, 0, 3, GL_FLOAT, 8 * sizeof(GLfloat), (void*)0);
-  this->VAO->LinkAttribute(*this->VBO, 1, 3, GL_FLOAT, 8 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-  this->VAO->LinkAttribute(*this->VBO, 2, 2, GL_FLOAT, 8 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+  this->VAO->LinkAttribute(*this->VBO, 0, 3, GL_FLOAT, 11 * sizeof(GLfloat), (void*)0);
+  this->VAO->LinkAttribute(*this->VBO, 1, 3, GL_FLOAT, 11 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+  this->VAO->LinkAttribute(*this->VBO, 2, 3, GL_FLOAT, 11 * sizeof(GLfloat), (void*)(6 * sizeof(GLfloat)));
+  this->VAO->LinkAttribute(*this->VBO, 3, 2, GL_FLOAT, 11 * sizeof(GLfloat), (void*)(9 * sizeof(GLfloat)));
 
   this->VAO->Unbind();
   this->VBO->Unbind();
@@ -34,23 +35,26 @@ crb::Solids::Solid crb::Solids::SolidFactory::createPlane(
   const crb::Space::Vec3& position, const float length, const float width, const unsigned int segmentCount, const crb::Terrain::ChunkStrategy& chunkStrategy
 ) const
 {
-  GLfloat vertices[(segmentCount + 1) * (segmentCount + 1) * 8];
+  GLfloat vertices[(segmentCount + 1) * (segmentCount + 1) * 11];
   GLuint indices[(segmentCount * 2 + 3) * segmentCount];
 
   for (int z = 0; z < segmentCount + 1; z++)
   {
     for (int x = 0; x < segmentCount + 1; x++)
     {
-      int index = z * (segmentCount + 1) * 8 + x * 8;
+      int index = z * (segmentCount + 1) * 11 + x * 11;
       vertices[index]     = x * length / segmentCount;
-      vertices[index + 1] = chunkStrategy.generatePosition((float)x, (float)z);
+      vertices[index + 1] = chunkStrategy.generatePosition(position.x * crb::CHUNK_SIZE + x, position.z * crb::CHUNK_SIZE + z);
       vertices[index + 2] = z * width / segmentCount;
       vertices[index + 3] = 0.f;
       vertices[index + 4] = 0.f;
       vertices[index + 5] = 0.f;
-      vertices[index + 6] = (float)x;
-      vertices[index + 7] = (float)z;
-    }
+      vertices[index + 6] = 0.f;
+      vertices[index + 7] = 0.f;
+      vertices[index + 8] = 0.f;
+      vertices[index + 9] = (float)x;
+      vertices[index + 10] = (float)z;
+     }
   }
 
   for (int i = 0; i < segmentCount; i++)

@@ -163,6 +163,13 @@ namespace crb
        */
       void applyMatrix(const crb::Graphics::Shader& shader)
       { shader.SetMatrix4(this->matrix, "cameraMatrix"); }
+      /**
+       * @brief Applies the camera's position to a shader.
+       * 
+       * @param shader The shader program to apply the position to.
+       */
+      void applyPosition(const crb::Graphics::Shader& shader)
+      { shader.SetVector3(this->position, "cameraPosition"); }
   
     private:
       float fov          {60.f};

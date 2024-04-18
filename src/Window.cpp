@@ -119,6 +119,7 @@ void crb::Window::_updateCamera()
   }
   this->boundCamera->updateMatrix();
   this->boundCamera->applyMatrix(*this->boundShader);
+  this->boundCamera->applyPosition(*this->boundShader);
 }
 
 void crb::Window::_updateCursor()

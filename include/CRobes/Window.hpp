@@ -205,7 +205,16 @@ namespace crb
        * @param shader The shader to bind.
        */
       void bindShader(crb::Graphics::Shader& shader)
-      { this->boundShader = &shader; shader.Use(); }
+      {
+        this->boundShader = &shader;
+        crb::Color::RGBA clearColor = this->getClearColor();
+        shader.Use();
+        shader.SetVector3({
+          clearColor.red,
+          clearColor.green,
+          clearColor.blue
+        }, "skyColor");
+      }
       /**
        * @brief Binds a camera for rendering.
        * 

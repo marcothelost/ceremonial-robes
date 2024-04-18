@@ -37,7 +37,7 @@ const crb::Space::Vec3 defaultCameraPosition {8.f, 1.8f, 8.f};
 
 // Chunk System
 crb::Solids::SolidFactory solidFactory;
-crb::Terrain::SinChunkStrategy chunkStrategy;
+crb::Terrain::FlatChunkStrategy chunkStrategy;
 
 // Window Class
 class MainWindow : public crb::Window
@@ -212,7 +212,7 @@ int main()
     WINDOW_TITLE
   };
   window.initialize();
-  window.setClearColor({220, 220, 220, 1.f});
+  window.setClearColor({186, 99, 56, 1.f});
 
   // Printing Engine and Version Info
   crb::Core::printEngineInfo();

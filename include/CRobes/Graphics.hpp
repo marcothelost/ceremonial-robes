@@ -91,6 +91,17 @@ namespace crb
           glUniform1i(intLoc, value);
         }
         /**
+         * @brief Sets the value of a uniform vector3 variable in the shader program.
+         *
+         * @param vec The vector3 value to set.
+         * @param uniform The name of the uniform variable.
+         */
+        void SetVector3(const crb::Space::Vec3& vec, const std::string& uniform) const
+        {
+          GLuint vecLoc = glGetUniformLocation(this->ID, uniform.c_str());
+          glUniform3f(vecLoc, vec.x, vec.y, vec.z);
+        }
+        /**
          * @brief Sets the value of a uniform matrix variable in the shader program.
          *
          * @param mat The matrix value to set.
