@@ -30,7 +30,9 @@ void crb::Solids::Solid::render(const crb::Graphics::Shader& shader, GLenum mode
   this->VAO->Unbind();
 }
 
-crb::Solids::Solid crb::Solids::SolidFactory::createPlane(const crb::Space::Vec3& position, const float length, const float width, const unsigned int segmentCount)
+crb::Solids::Solid crb::Solids::SolidFactory::createPlane(
+  const crb::Space::Vec3& position, const float length, const float width, const unsigned int segmentCount, const crb::Terrain::ChunkStrategy& chunkStrategy
+) const
 {
   GLfloat vertices[(segmentCount + 1) * (segmentCount + 1) * 8];
   GLuint indices[(segmentCount * 2 + 3) * segmentCount];
@@ -41,7 +43,7 @@ crb::Solids::Solid crb::Solids::SolidFactory::createPlane(const crb::Space::Vec3
     {
       int index = z * (segmentCount + 1) * 8 + x * 8;
       vertices[index]     = x * length / segmentCount;
-      vertices[index + 1] = 0.f;
+      vertices[index + 1] = chunkStrategy.generatePosition((float)x, (float)z);
       vertices[index + 2] = z * width / segmentCount;
       vertices[index + 3] = 0.f;
       vertices[index + 4] = 0.f;

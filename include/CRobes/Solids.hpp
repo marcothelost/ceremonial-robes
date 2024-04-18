@@ -5,6 +5,7 @@
 
 #include "Graphics.hpp"
 #include "Space.hpp"
+#include "Terrain.hpp"
 
 namespace crb
 {
@@ -191,9 +192,10 @@ namespace crb
          * @param length The length of the plane.
          * @param width The width of the plane.
          * @param segmentCount The number of segments in the plane's geometry.
+         * @param chunkStrategy The chunk generation strategy to use for creating the plane.
          * @return The created plane object.
          */
-        crb::Solids::Solid createPlane(const crb::Space::Vec3& position, const float length, const float width, const unsigned int segmentCount);
+        crb::Solids::Solid createPlane(const crb::Space::Vec3& position, const float length, const float width, const unsigned int segmentCount,const crb::Terrain::ChunkStrategy& chunkStrategy) const;
     };
   }
 }

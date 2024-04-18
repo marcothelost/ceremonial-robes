@@ -10,6 +10,7 @@ add_library(
   Camera.cpp
   Solids.cpp
   GUI.cpp
+  Terrain.cpp
 )
 
 # Linking Libraries
