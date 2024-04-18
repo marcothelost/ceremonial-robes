@@ -1,46 +1,42 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
+#include <vector>
+#include <algorithm>
 #include <iostream>
 #include <string>
 
 #include "CRobes/Constants.hpp"
 #include "CRobes/Core.hpp"
 #include "CRobes/Color.hpp"
-#include "CRobes/File.hpp"
 #include "CRobes/Graphics.hpp"
 #include "CRobes/Window.hpp"
 #include "CRobes/Space.hpp"
 #include "CRobes/Camera.hpp"
+#include "CRobes/Solids.hpp"
+#include "CRobes/GUI.hpp"
+#include "CRobes/Debug.hpp"
 
-// Constants
+// Window Settings
 constexpr unsigned int WINDOW_WIDTH  {800u};
 constexpr unsigned int WINDOW_HEIGHT {600u};
-const     std::string  WINDOW_TITLE  {"GLFW"};
+const     std::string  WINDOW_TITLE  {crb::ENGINE_NAME + " " + crb::ENGINE_VERSION};
 
 // Camera Settings
 constexpr float CAMERA_FOV         {60.f};
 constexpr float CAMERA_NEAR        {0.1f};
-constexpr float CAMERA_FAR         {100.f};
+constexpr float CAMERA_FAR         {512.f};
 constexpr float CAMERA_SPEED       {5.f};
-constexpr float CAMERA_SENSITIVITY {0.05f};
+constexpr float CAMERA_SENSITIVITY {0.1};
 
-// Vertices and Indices
-GLfloat vertices[] =
-{
-  -0.5f,  -0.5f, 0.f, 1.f, 1.f, 1.f,
-   0.0f,  -0.5f, 0.f, 1.f, 1.f, 1.f,
-   0.5f,  -0.5f, 0.f, 1.f, 1.f, 1.f,
-  -0.25f,  0.0f, 0.f, 1.f, 1.f, 1.f,
-   0.25f,  0.0f, 0.f, 1.f, 1.f, 1.f,
-   0.0f,   0.5f, 0.f, 1.f, 1.f, 1.f,
-};
-GLuint indices[] =
-{
-  0, 1, 3,
-  1, 2, 4,
-  3, 4, 5,
-};
+// Settings
+constexpr unsigned int RENDER_DISTANCE {8};
+
+// Camera Position
+const crb::Space::Vec3 defaultCameraPosition {8.f, 1.8f, 8.f};
+
+// Solid Factory
+crb::Solids::SolidFactory solidFactory;
 
 // Window Class
 class MainWindow : public crb::Window
@@ -50,31 +46,104 @@ class MainWindow : public crb::Window
 
     ~MainWindow()
     {
-      this->VAO1.Delete();
-      this->VBO1.Delete();
-      this->EBO1.Delete();
       this->defaultShader.Delete();
     }
 
     void initialize()
     {
-      this->VAO1.Bind();
-      this->VBO1.Bind();
-      this->EBO1.Bind();
-
-      this->VAO1.LinkAttribute(this->VBO1, 0, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)0);
-      this->VAO1.LinkAttribute(this->VBO1, 1, 3, GL_FLOAT, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-
-      this->VAO1.Unbind();
-      this->VBO1.Unbind();
-      this->EBO1.Unbind();
-
       this->bindCamera(this->camera);
+      this->camera.setPosition(defaultCameraPosition);
+      this->chunks.reserve(pow(RENDER_DISTANCE * 2 - 1, 2));
+
+      for (int z = 0; z < 3; z++)
+      {
+        for (int x = 0; x < 3; x++)
+        {
+          this->chunks.emplace_back(solidFactory.createPlane(
+            {(x - 1) * crb::CHUNK_SIZE, 0.f, (z - 1) * crb::CHUNK_SIZE},
+            crb::CHUNK_SIZE,
+            crb::CHUNK_SIZE,
+            crb::CHUNK_SEGMENTS
+          ));
+        }
+      }
     }
 
   protected:
+    std::vector<std::pair<int, int>> calculateRequiredChunks()
+    {
+      std::vector<std::pair<int, int>> chunks;
+
+      int cameraChunkX = crb::Space::getChunkX(this->camera.getPosition());
+      int cameraChunkZ = crb::Space::getChunkZ(this->camera.getPosition());
+
+      for (int z = 0; z < RENDER_DISTANCE * 2 - 1; z++)
+      {
+        for (int x = 0; x < RENDER_DISTANCE * 2 - 1; x++)
+        {
+          chunks.push_back(std::pair(
+            x - RENDER_DISTANCE + cameraChunkX + 1,
+            z - RENDER_DISTANCE + cameraChunkZ + 1
+          ));
+        }
+      }
+
+      return chunks;
+    }
+
+    void updateChunks()
+    {
+      std::vector<std::pair<int, int>> requiredChunks = this->calculateRequiredChunks();
+
+      this->chunks.erase(std::remove_if(
+        this->chunks.begin(),
+        this->chunks.end(),
+        [&](const crb::Solids::Solid& chunk)
+        {
+          for (const auto& chunkPosition : requiredChunks)
+          {
+            if (
+              crb::Space::getChunkX(chunk.getPosition().x) == chunkPosition.first &&
+              crb::Space::getChunkZ(chunk.getPosition().z) == chunkPosition.second
+            ) return false;
+          }
+          return true;
+        }
+      ), this->chunks.end());
+
+      for (const auto& chunkPosition : requiredChunks)
+      {
+        bool chunkFound {false};
+        for (const auto& chunk : this->chunks)
+        {
+          if (
+            crb::Space::getChunkX(chunk.getPosition().x) == chunkPosition.first &&
+            crb::Space::getChunkZ(chunk.getPosition().z) == chunkPosition.second
+          ) chunkFound = true;
+        }
+        if (!chunkFound)
+        {
+          this->chunks.emplace_back(solidFactory.createPlane(
+            {chunkPosition.first * crb::CHUNK_SIZE, 0.f, chunkPosition.second * crb::CHUNK_SIZE},
+            crb::CHUNK_SIZE,
+            crb::CHUNK_SIZE,
+            crb::CHUNK_SEGMENTS
+          ));
+        }
+      }
+    }
+
     void update()
     {
+      this->updateChunks();
+
+      const unsigned int bufferWidth = this->getWidth();
+      const unsigned int bufferHeight = this->getHeight();
+      this->crosshair.setPosition({
+        (float)bufferWidth / 2.f - 8.f,
+        (float)bufferHeight / 2.f - 8.f
+      });
+
       if (this->isKeyPressed(crb::Key::E))
       { this->setMouseLocked(true); }
       if (this->isKeyPressed(crb::Key::Escape))
@@ -130,6 +199,15 @@ class MainWindow : public crb::Window
       if (this->isKeyPressed(crb::Key::Num5))
       { this->camera.setFov(120.f); }
 
+      if (this->isMouseButtonPressed(crb::MouseButton::LeftButton))
+      {
+        this->camera.setSpeed(CAMERA_SPEED * 5.f);
+      }
+      else
+      {
+        this->camera.setSpeed(CAMERA_SPEED);
+      }
+
       this->camera.setMovement({
         xFactor,
         yFactor,
@@ -140,12 +218,21 @@ class MainWindow : public crb::Window
     void render()
     {
       this->bindShader(this->defaultShader);
-
-      crb::Space::Mat4 model {1.f};
-      defaultShader.SetMatrix4(model, "model");
-
-      this->VAO1.Bind();
-      glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(GLuint), GL_UNSIGNED_INT, NULL);
+      this->camera.use3D();
+      this->camera.applyMatrix(this->defaultShader);
+      soilTexture.Bind();
+      soilTexture.ApplyUnit(this->defaultShader, 0);
+      for (const crb::Solids::Solid& chunk : this->chunks)
+      {
+        chunk.render(this->defaultShader, GL_TRIANGLE_STRIP);
+      }
+      this->bindShader(this->guiShader);
+      this->camera.use2D();
+      this->camera.applyMatrix(this->guiShader);
+      crosshairTexture.Bind();
+      crosshairTexture.ApplyUnit(this->guiShader, 0);
+      this->crosshair.render(this->guiShader);
+      this->bindShader(this->defaultShader);
     }
 
   private:
@@ -153,6 +240,21 @@ class MainWindow : public crb::Window
     {
       "resources/Shaders/default.vert",
       "resources/Shaders/default.frag"
+    };
+    crb::Graphics::Shader guiShader
+    {
+      "resources/Shaders/gui.vert",
+      "resources/Shaders/gui.frag"
+    };
+    crb::Graphics::Texture soilTexture
+    {
+      "resources/Textures/soil.png",
+      GL_TEXTURE_2D
+    };
+    crb::Graphics::Texture crosshairTexture
+    {
+      "resources/Textures/crosshair.png",
+      GL_TEXTURE_2D
     };
     crb::Camera camera
     {
@@ -164,17 +266,16 @@ class MainWindow : public crb::Window
       CAMERA_SPEED,
       CAMERA_SENSITIVITY
     };
-
-    crb::Graphics::VAO VAO1;
-    crb::Graphics::VBO VBO1 {vertices, sizeof(vertices)};
-    crb::Graphics::EBO EBO1 {indices, sizeof(indices)};
+    crb::GUI::Element crosshair {
+      {0.f, 0.f}, 0.f, 0.f, 16.f, 16.f
+    };
+    std::vector<crb::Solids::Solid> chunks;
 
     bool canFullscreen {true};
 };
 
 int main()
 {
-  // Initializing GLFW
   crb::Core::initializeGlfw();
 
   // Window
@@ -185,15 +286,16 @@ int main()
     WINDOW_TITLE
   };
   window.initialize();
-  window.setClearColor(crb::Color::Black);
+  window.setClearColor({220, 220, 220, 1.f});
 
   // Printing Engine and Version Info
   crb::Core::printEngineInfo();
   std::cout << '\n';
   crb::Core::printVersionInfo();
 
-  // Line Mode
+  // Line Mode and Settings
   crb::Graphics::useLineMode();
+  crb::Graphics::setPointSize(5.f);
 
   // Main Loop
   window.loop();

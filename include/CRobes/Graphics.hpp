@@ -6,6 +6,7 @@
 
 #include "Constants.hpp"
 #include "File.hpp"
+#include "Image.hpp"
 #include "Space.hpp"
 
 namespace crb
@@ -32,6 +33,14 @@ namespace crb
     { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
 
     /**
+     * @brief Sets the size of points when rendered in point mode.
+     * 
+     * @param pointSize The size of the points.
+     */
+    inline void setPointSize(const float pointSize)
+    { glPointSize(pointSize); }
+ 
+    /**
      * @class Shader
      * @brief Encapsulates OpenGL shader functionality.
      * 
@@ -52,6 +61,14 @@ namespace crb
         Shader(const std::string& vertexPath, const std::string& fragmentPath);
 
         /**
+         * @brief Gets the OpenGL ID of the shader program.
+         *
+         * @return The OpenGL ID of the shader program.
+         */
+        GLuint getID() const
+        { return this->ID; }
+
+        /**
          * @brief Activates the shader program for use.
          */
         void Use() const
@@ -59,9 +76,20 @@ namespace crb
         /**
          * @brief Deletes the shader program, releasing associated OpenGL resources.
          */
-        void Delete() const
+        void Delete()
         { glDeleteProgram(this->ID); }
 
+        /**
+         * @brief Sets the value of a uniform integer variable in the shader program.
+         *
+         * @param value The integer value to set.
+         * @param uniform The name of the uniform variable.
+         */
+        void SetInt(int value, const std::string& uniform) const
+        {
+          GLuint intLoc = glGetUniformLocation(this->ID, uniform.c_str());
+          glUniform1i(intLoc, value);
+        }
         /**
          * @brief Sets the value of a uniform matrix variable in the shader program.
          *
@@ -98,6 +126,14 @@ namespace crb
         VBO(GLfloat vertices[], GLsizeiptr verticesSize);
 
         /**
+         * @brief Gets the OpenGL ID of the VBO.
+         *
+         * @return The OpenGL ID of the VBO.
+         */
+        GLuint getID() const
+        { return this->ID; }
+
+        /**
          * @brief Binds the VBO.
          */
         void Bind() const
@@ -110,7 +146,7 @@ namespace crb
         /**
          * @brief Deletes the VBO, releasing associated OpenGL resources.
          */
-        void Delete() const
+        void Delete()
         { glDeleteBuffers(1, &this->ID); }
 
       private:
@@ -137,6 +173,14 @@ namespace crb
         EBO(GLuint indices[], GLsizeiptr indicesSize);
 
         /**
+         * @brief Gets the OpenGL ID of the EBO.
+         *
+         * @return The OpenGL ID of the EBO.
+         */
+        GLuint getID() const
+        { return this->ID; }
+
+        /**
          * @brief Binds the EBO.
          */
         void Bind() const
@@ -149,7 +193,7 @@ namespace crb
         /**
          * @brief Deletes the EBO, releasing associated OpenGL resources.
          */
-        void Delete() const
+        void Delete()
         { glDeleteBuffers(1, &this->ID); }
 
       private:
@@ -171,7 +215,18 @@ namespace crb
          * @brief Constructs a VAO object.
          */
         VAO()
-        { glGenVertexArrays(1, &this->ID); }
+        {
+          glGenVertexArrays(1, &this->ID);
+          this->Bind();
+        }
+
+        /**
+         * @brief Gets the OpenGL ID of the VAO.
+         *
+         * @return The OpenGL ID of the VAO.
+         */
+        GLuint getID() const
+        { return this->ID; }
 
         /**
          * @brief Binds the VAO.
@@ -186,7 +241,7 @@ namespace crb
         /**
          * @brief Deletes the VAO, releasing associated OpenGL resources.
          */
-        void Delete() const
+        void Delete()
         { glDeleteVertexArrays(1, &this->ID); }
         /**
          * @brief Links a vertex attribute to the VAO.
@@ -202,6 +257,57 @@ namespace crb
 
       private:
         GLuint ID;
+    };
+
+    /**
+     * @brief A class representing an OpenGL texture loaded from a PNG image file.
+     */
+    class Texture
+    {
+      public:
+        /**
+         * @brief Constructs a Texture object by loading an image from the specified PNG file path.
+         * 
+         * @param pngPath The file path to the PNG image.
+         * @param type The type of texture (e.g., GL_TEXTURE_2D).
+         */
+        Texture(const std::string& pngPath, GLenum type);
+
+        /**
+         * @brief Gets the OpenGL ID of the texture.
+         * 
+         * @return The OpenGL ID of the texture.
+         */
+        GLuint getID() const
+        { return this->ID; }
+
+        /**
+         * @brief Binds the texture for rendering.
+         */
+        void Bind() const
+        { glBindTexture(this->type, this->ID); }
+        /**
+         * @brief Unbinds the texture.
+         */
+        void Unbind() const
+        { glBindTexture(this->type, 0); }
+        /**
+         * @brief Deletes the texture from OpenGL memory.
+         */
+        void Delete()
+        { glDeleteTextures(1, &this->ID); }
+        /**
+         * @brief Applies the texture to a texture unit in the shader.
+         * 
+         * @param shader The shader program to which the texture will be applied.
+         * @param unit The texture unit to which the texture will be bound.
+         */
+        void ApplyUnit(const crb::Graphics::Shader& shader, GLuint unit)
+        { shader.SetInt(unit, "tex0"); }
+
+      private:
+        GLuint ID;
+        GLenum type;
     };
   }
 }

@@ -10,56 +10,80 @@ project(${PROJECT_NAME})
 # C++ Standard
 set(CMAKE_CXX_STANDARD 17)
 
+# MinGW
+if(BUILD_FOR_WINDOWS)
+  set(CMAKE_SYSTEM_NAME Windows)
+  set(CMAKE_C_COMPILER x86_64-w64-mingw32-gcc)
+  set(CMAKE_CXX_COMPILER x86_64-w64-mingw32-g++)
+  set(CMAKE_RC_COMPILER x86_64-w64-mingw32-windres)
+  set(CMAKE_MAKE_PROGRAM x86_64-w64-mingw32-make)
+endif()
+
 # Finding Library Paths
-find_path(GLEW_INCLUDE_DIR NAMES GL/glew.h PATHS ${CMAKE_SOURCE_DIR}/include)
-find_path(GLFW_INCLUDE_DIR NAMES GLFW/glfw3.h PATHS ${CMAKE_SOURCE_DIR}/include)
+find_path(GLEW_INCLUDE_DIR NAMES GL/glew.h HINTS "${CMAKE_SOURCE_DIR}/include")
+find_path(GLFW_INCLUDE_DIR NAMES GLFW/glfw3.h HINTS "${CMAKE_SOURCE_DIR}/include")
+find_path(PNG_INCLUDE_DIR NAMES libpng16/png.h HINTS "${CMAKE_SOURCE_DIR}/include")
 set(CROBES_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 
 # Finding Libraries
-if(WIN32)
-  find_library(GLEW_LIBRARY NAMES GLEW.win PATHS ${CMAKE_SOURCE_DIR}/lib)
-  find_library(GLFW_LIBRARY NAMES glfw3.win PATHS ${CMAKE_SOURCE_DIR}/lib)
+if(WIN32 OR BUILD_FOR_WINDOWS)
+  find_library(GLEW_LIBRARY NAMES GLEW.win HINTS "${CMAKE_SOURCE_DIR}/lib")
+  find_library(GLFW_LIBRARY NAMES glfw3.win HINTS "${CMAKE_SOURCE_DIR}/lib")
+  find_library(PNG_LIBRARY NAMES png16.win HINTS "${CMAKE_SOURCE_DIR}/lib")
 else()
   find_library(GLEW_LIBRARY NAMES GLEW PATHS ${CMAKE_SOURCE_DIR}/lib)
   find_library(GLFW_LIBRARY NAMES glfw3 PATHS ${CMAKE_SOURCE_DIR}/lib)
+  find_library(PNG_LIBRARY NAMES png16 PATHS ${CMAKE_SOURCE_DIR}/lib)
 endif()
 
 # Validating GLEW
 if(GLEW_INCLUDE_DIR AND GLEW_LIBRARY)
-  message("GLEW found!")
+  message("✓ GLEW found")
   set(GLEW_INCLUDE_DIRS ${GLEW_INCLUDE_DIR})
   set(GLEW_LIBRARIES ${GLEW_LIBRARY})
 else()
-  message(FATAL_ERROR "GLEW not found!")
+  message(FATAL_ERROR "𐄂 GLEW not found")
 endif()
 
 # Validating GLFW
 if(GLFW_INCLUDE_DIR AND GLFW_LIBRARY)
-  message("GLFW found!")
+  message("✓ GLFW found")
   set(GLFW_INCLUDE_DIRS ${GLFW_INCLUDE_DIR})
   set(GLFW_LIBRARIES ${GLFW_LIBRARY})
 else()
-  message(FATAL_ERROR "GLFW not found!")
+  message(FATAL_ERROR "𐄂 GLFW not found")
+endif()
+
+# Validating PNG
+if(PNG_INCLUDE_DIR AND PNG_LIBRARY)
+  message("✓ PNG found")
+  set(PNG_INCLUDE_DIRS ${PNG_INCLUDE_DIR})
+  set(PNG_LIBRARIES ${PNG_LIBRARY})
+else()
+  message(FATAL_ERROR "𐄂 PNG not found")
 endif()
 
 # Validating Ceremonial Robes
 if(EXISTS ${CROBES_INCLUDE_DIR})
-  message("Ceremonial Robes found!")
+  message("✓ Ceremonial Robes found")
   set(CROBES_INCLUDE_DIRS ${CROBES_INCLUDE_DIR})
 else()
-  message(FATAL_ERROR "Ceremonial Robes not found!")
+  message(FATAL_ERROR "𐄂 Ceremonial Robes not found")
 endif()
 
 # Including External Libraries
-include_directories(${GLEW_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS} ${CROBES_INCLUDE_DIRS})
+include_directories(${GLEW_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS} ${PNG_INCLUDE_DIRS} ${CROBES_INCLUDE_DIRS})
 
 # DLL Files
-if(WIN32)
+if(WIN32 OR BUILD_FOR_WINDOWS)
   file(GLOB dll_files ${CMAKE_SOURCE_DIR}/lib/*.dll)
   foreach(dll_file ${dll_files})
     file(COPY ${dll_file} DESTINATION ${CMAKE_SOURCE_DIR}/build/examples)
   endforeach()
 endif()
+
+# Resource Files
+file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_SOURCE_DIR}/build/examples)
 
 # Subdirectories
 add_subdirectory(src)

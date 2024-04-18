@@ -66,7 +66,6 @@ crb::Graphics::VBO::VBO(GLfloat vertices[], GLsizeiptr verticesSize)
   glGenBuffers(1, &this->ID);
   this->Bind();
   glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
-  this->Unbind();
 }
 
 crb::Graphics::EBO::EBO(GLuint indices[], GLsizeiptr indicesSize)
@@ -74,7 +73,6 @@ crb::Graphics::EBO::EBO(GLuint indices[], GLsizeiptr indicesSize)
   glGenBuffers(1, &this->ID);
   this->Bind();
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize, indices, GL_STATIC_DRAW);
-  this->Unbind();
 }
 
 void crb::Graphics::VAO::LinkAttribute(const crb::Graphics::VBO& VBO, GLuint layout, GLuint size, GLenum type, GLsizeiptr stride, const void* offset) const
@@ -83,4 +81,37 @@ void crb::Graphics::VAO::LinkAttribute(const crb::Graphics::VBO& VBO, GLuint lay
   glVertexAttribPointer(layout, size, type, GL_FALSE, stride, offset);
   glEnableVertexAttribArray(layout);
   VBO.Unbind();
+}
+
+crb::Graphics::Texture::Texture(const std::string& pngPath, GLenum type) : type(type)
+{
+  glGenTextures(1, &this->ID);
+  glBindTexture(type, this->ID);
+
+  GLubyte* data;
+  unsigned int width;
+  unsigned int height;
+  bool hasAlpha;
+  crb::Image::loadFromPNG(pngPath, &data, width, height, hasAlpha);
+
+  glTexImage2D(
+    type,
+    0,
+    hasAlpha ? GL_RGBA : GL_RGB,
+    width,
+    height,
+    0,
+    hasAlpha ? GL_RGBA : GL_RGB,
+    GL_UNSIGNED_BYTE,
+    data
+  );
+  glGenerateMipmap(type);
+
+  glTexParameteri(type, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(type, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(type, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+  glBindTexture(type, 0);
+  delete data;
 }

@@ -12,7 +12,7 @@ namespace crb
   /**
    * @brief The version of the Ceremonial Robes Engine.
    */
-  inline const std::string ENGINE_VERSION {"0.1 InDev"};
+  inline const std::string ENGINE_VERSION {"0.2 InDev"};
   /**
    * @brief The author of the Ceremonial Robes Engine.
    */
@@ -26,6 +26,15 @@ namespace crb
    * @brief The size of the information log buffer.
    */
   inline const unsigned int INFO_LOG_SIZE {512u};
+
+  /**
+   * @brief The size of each chunk.
+   */
+  constexpr float CHUNK_SIZE {16.f};
+  /**
+   * @brief The number of segments in each chunk.
+   */
+  constexpr float CHUNK_SEGMENTS {16};
 }
 
 #endif // CRB_CONSTANTS_HPP

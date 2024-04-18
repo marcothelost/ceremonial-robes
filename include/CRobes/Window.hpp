@@ -190,6 +190,14 @@ namespace crb
        */
       inline bool isKeyPressed(const crb::Key& key)
       { return crb::Input::isKeyPressed(this->glfwInstance, key); }
+      /**
+       * @brief Checks if a mouse button is currently pressed.
+       * 
+       * @param mouseButton The mouse button to check.
+       * @return True if the mouse button is pressed, false otherwise.
+       */
+      inline bool isMouseButtonPressed(const crb::MouseButton& mouseButton)
+      { return crb::Input::isMouseButtonPressed(this->glfwInstance, mouseButton); }
 
       /**
        * @brief Binds a shader for rendering.

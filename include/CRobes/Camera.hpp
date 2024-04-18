@@ -26,7 +26,7 @@ namespace crb
        * @param sensitivity The sensitivity of the camera controls.
        */
       Camera(const float fov, const float bufferWidth, const float bufferHeight, const float zNear, const float zFar, const float speed, const float sensitivity)
-      : fov(fov), bufferWidth(bufferWidth), bufferHeight(bufferHeight), zNear(zNear), zFar(zFar), speed(speed)
+      : fov(fov), bufferWidth(bufferWidth), bufferHeight(bufferHeight), zNear(zNear), zFar(zFar), speed(speed), sensitivity(sensitivity)
       {}
 
       /**
@@ -78,6 +78,13 @@ namespace crb
        */
       float getSensitivity() const
       { return this->sensitivity; }
+      /**
+       * @brief Gets the position of the camera.
+       * 
+       * @return The position of the camera.
+       */
+      crb::Space::Vec3 getPosition() const
+      { return this->position; }
 
       /**
        * @brief Sets the field of view angle of the camera.
@@ -108,12 +115,30 @@ namespace crb
       void setSpeed(const float speed)
       { this->speed = speed; }
       /**
+       * @brief Sets the position of the camera.
+       * 
+       * @param position The new position of the camera.
+       */
+      void setPosition(const crb::Space::Vec3& position)
+      { this->position = position; }
+      /**
        * @brief Sets the movement vector of the camera.
        * 
        * @param movement The movement vector.
        */
       void setMovement(const crb::Space::Vec3& movement)
       { this->movement = movement; }
+
+      /**
+       * @brief Sets the camera to use 2D mode.
+       */
+      void use2D()
+      { this->using3D = false; this->updateMatrix(); }
+      /**
+       * @brief Sets the camera to use 3D mode.
+       */
+      void use3D()
+      { this->using3D = true; this->updateMatrix(); }
 
       /**
        * @brief Updates the position of the camera based on its movement and deltaTime.
@@ -149,13 +174,15 @@ namespace crb
       float sensitivity  {0.1f};
 
       crb::Space::Mat4 matrix   {1.f};
-      crb::Space::Vec3 position {0.f, 0.f, -3.f};
+      crb::Space::Vec3 position {0.f};
       crb::Space::Vec3 front    {0.f, 0.f, -1.f};
       crb::Space::Vec3 up       {0.f, 1.f, 0.f};
       crb::Space::Vec3 movement {0.f};
 
-      float yaw   {90.f};
+      float yaw   {-90.f};
       float pitch {0.f};
+
+      bool using3D {true};
   };
 }
 
