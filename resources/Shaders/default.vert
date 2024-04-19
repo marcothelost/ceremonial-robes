@@ -14,13 +14,13 @@ uniform mat4 model;
 uniform mat4 cameraMatrix;
 uniform vec3 cameraPosition;
 
-const float density = 0.015f;
-const float gradient = 3.f;
+uniform float fogDensity = 0.f;
+uniform float fogGradient = 0.f;
 
 void main()
 {
   float distance = length(cameraPosition - vec3(model * vec4(aPos, 1.f)));
-  float fogCalculation = exp(-pow(distance * density, gradient));
+  float fogCalculation = exp(-pow(distance * fogDensity, fogGradient));
   fogCalculation = 1.f - clamp(fogCalculation, 0.f, 1.f);
 
   vertCol = aCol;

@@ -68,6 +68,23 @@ namespace crb
     };
 
     /**
+     * @brief Chunk generation strategy that generates chunk positions based on sine and cosine functions.
+     */
+    class SinCosChunkStrategy : public ChunkStrategy
+    {
+      public:
+        /**
+         * @brief Generates the position for a chunk based on the provided coordinates.
+         * 
+         * @param x The x-coordinate of the chunk.
+         * @param z The z-coordinate of the chunk.
+         * @return The generated position for the chunk.
+         */
+        float generatePosition(float x, float z) const
+        { return sinf(x) * cosf(z); }
+    };
+
+    /**
      * @brief Class for managing chunks and their generation.
      */
     class ChunkManager

@@ -37,7 +37,7 @@ const crb::Space::Vec3 defaultCameraPosition {8.f, 1.8f, 8.f};
 
 // Chunk System
 crb::Solids::SolidFactory solidFactory;
-crb::Terrain::FlatChunkStrategy chunkStrategy;
+crb::Terrain::SinCosChunkStrategy chunkStrategy;
 
 // Window Class
 class MainWindow : public crb::Window
@@ -52,7 +52,9 @@ class MainWindow : public crb::Window
 
     void initialize()
     {
+      this->bindShader(this->defaultShader);
       this->bindCamera(this->camera);
+      this->fog.applyProperties(this->defaultShader);
       this->camera.setPosition(defaultCameraPosition);
     }
 
@@ -177,6 +179,11 @@ class MainWindow : public crb::Window
       "resources/Textures/crosshair.png",
       GL_TEXTURE_2D
     };
+    crb::Graphics::Fog fog
+    {
+      0.025f,
+      2.f
+    };
     crb::Camera camera
     {
       CAMERA_FOV,
@@ -220,7 +227,6 @@ int main()
   crb::Core::printVersionInfo();
 
   // Line Mode and Settings
-  crb::Graphics::useLineMode();
   crb::Graphics::setPointSize(5.f);
 
   // Main Loop

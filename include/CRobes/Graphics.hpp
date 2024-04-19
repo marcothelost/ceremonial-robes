@@ -91,6 +91,17 @@ namespace crb
           glUniform1i(intLoc, value);
         }
         /**
+         * @brief Sets the value of a uniform float variable in the shader program.
+         *
+         * @param value The float value to set.
+         * @param uniform The name of the uniform variable.
+         */
+        void SetFloat(float value, const std::string& uniform) const
+        {
+          GLuint floatLoc = glGetUniformLocation(this->ID, uniform.c_str());
+          glUniform1f(floatLoc, value);
+        }
+        /**
          * @brief Sets the value of a uniform vector3 variable in the shader program.
          *
          * @param vec The vector3 value to set.
@@ -319,6 +330,38 @@ namespace crb
       private:
         GLuint ID;
         GLenum type;
+    };
+
+    /**
+     * @brief Represents a fog effect in a scene.
+     */
+    class Fog
+    {
+      public:
+        /**
+         * @brief Constructs a Fog object with the specified density and gradient.
+         * 
+         * @param density The density of the fog.
+         * @param gradient The gradient of the fog.
+         */
+        Fog(const float density, const float gradient)
+        : density(density), gradient(gradient)
+        {}
+
+        /**
+         * @brief Applies the properties of the fog to a shader.
+         * 
+         * @param shader The shader program to apply the fog properties to.
+         */
+        void applyProperties(const crb::Graphics::Shader& shader)
+        {
+          shader.SetFloat(this->density, "fogDensity");
+          shader.SetFloat(this->gradient, "fogGradient");
+        }
+
+      private:
+        float density {0.f};
+        float gradient {0.f};
     };
   }
 }

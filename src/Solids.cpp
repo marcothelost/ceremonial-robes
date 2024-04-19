@@ -43,9 +43,12 @@ crb::Solids::Solid crb::Solids::SolidFactory::createPlane(
     for (int x = 0; x < segmentCount + 1; x++)
     {
       int index = z * (segmentCount + 1) * 11 + x * 11;
-      vertices[index]     = x * length / segmentCount;
-      vertices[index + 1] = chunkStrategy.generatePosition(position.x * crb::CHUNK_SIZE + x, position.z * crb::CHUNK_SIZE + z);
-      vertices[index + 2] = z * width / segmentCount;
+      float xFactor = length / segmentCount;
+      float zFactor = width / segmentCount;
+
+      vertices[index]     = x * xFactor;
+      vertices[index + 1] = chunkStrategy.generatePosition(position.x + x * xFactor, position.z + z * zFactor);
+      vertices[index + 2] = z * zFactor;
       vertices[index + 3] = 0.f;
       vertices[index + 4] = 0.f;
       vertices[index + 5] = 0.f;
